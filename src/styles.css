@@ -1,0 +1,13 @@
+/* You can add global styles to this file, and also import other style files */
+.user-box {
+    text-align: -webkit-center!important;
+}
+.font-12{
+	font-size: 12px;
+}
+.font-14{
+	font-size: 12px;
+}
+.search-result-box .search-item {
+    margin-bottom: 0px!important;
+}

@@ -1,0 +1,204 @@
+<div class="row">
+    <div class="col-lg-5">
+        <div class="card-box">
+           <h4 class="header-title"> Mon image de profil
+	           <span class="pull-right">
+	               <button nz-button nzType="primary" (click)="showModal()">
+	                      <span>Modifier</span>
+	                </button>
+	           </span>
+	        </h4>
+
+            <div><br/></div> 
+            <div style="text-align: center;">
+            	<img src="{{g_var.url}}api/auth/files/{{user.profil}}?x={{g_var.timer}}" width="180" height="180" class="rounded-circle ">
+            	<br>
+            	 
+			</div>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="card-box">
+           <h4 class="header-title"> Mes informations personel
+              <span class="pull-right">
+                  <button nz-button nzType="primary" (click)="isVisibleInfo=!isVisibleInfo">
+                        <span>Modifier</span>
+                  </button>
+              </span>
+           </h4>
+            <div><br/></div> 
+            <div class="row">
+
+              <div class="col-md-5"><p style="margin-bottom: 14px!important;"><b>Nom</b></p></div>
+              <div class="col-md-7"><p class="mb-0">{{user.name}}</p></div>
+
+              <div class="col-md-5"><p style="margin-bottom: 14px!important;"><b>Prénom</b></p></div>
+              <div class="col-md-7"><p class="mb-0">{{user.lastName}}</p></div>
+
+              <div class="col-md-5"><p style="margin-bottom: 14px!important;"><b>Email</b></p></div>
+              <div class="col-md-7"><p class="mb-0">{{user.email}}</p></div>
+
+              <div class="col-md-5"><p style="margin-bottom: 14px!important;"><b>UserName</b></p></div>
+              <div class="col-md-7"><p class="mb-0">{{user.username}}</p></div>
+
+              <div class="col-md-5"><p style="margin-bottom: 14px!important;"><b>Mot de passe</b></p></div>
+              <div class="col-md-7"><p class="mb-0" (click)="isVisiblePasse=!isVisiblePasse">Modifier</p></div>
+
+              <!--<div class="col-md-5" *ngIf="authority=='eleve'"><p style="margin-bottom: 14px!important;"><b>Mon professeur</b></p></div>
+              <div class="col-md-7" *ngIf="authority=='eleve'">{{user.superieur.name}} &nbsp;{{user.superieur.lastName}}</div>-->
+
+            </div>
+            
+                     
+        </div>
+    </div>
+</div>
+ 
+
+<nz-modal [(nzVisible)]="isVisible" [nzWidth]="400" [nzTitle]="modalTitle" [nzContent]="modalContent"  [nzFooter]="modalFooter" (nzOnCancel)="handleCancel()">
+    
+      <ng-template #modalTitle>
+        Modifier l'image de profil
+      </ng-template>
+
+      <ng-template #modalContent>
+
+
+      <div class="clearfix">
+	    <nz-upload
+	      nzAction=""
+	      nzListType="picture-card"
+	      [(nzFileList)]="fileList"
+	      [nzShowButton]="fileList.length < 1"
+	      [nzPreview]="handlePreview">
+	        <i nz-icon type="plus"></i>
+	        <div class="ant-upload-text">Upload</div>
+	    </nz-upload>
+	    <nz-modal [nzVisible]="previewVisible" [nzContent]="modalContent" [nzFooter]="null" (nzOnCancel)="previewVisible=false">
+	      <ng-template #modalContent>
+	        <img [src]="previewImage" [ngStyle]="{ 'width': '100%' }" />
+	      </ng-template>
+	    </nz-modal>
+	  </div>
+
+      </ng-template>
+
+      <ng-template #modalFooter>
+        <button nz-button nzType="default" (click)="handleCancel()">Annuler</button>
+        <button nz-button nzType="primary" (click)="handleOk()">Confirmer</button>
+      </ng-template>
+  
+</nz-modal>
+
+
+
+<nz-modal [(nzVisible)]="isVisibleInfo" [nzWidth]="600" [nzTitle]="modalTitle1" [nzContent]="modalContent1"  [nzFooter]="modalFooter1" (nzOnCancel)="isVisibleInfo=false">
+      <ng-template #modalTitle1>
+        Modifier mes infos
+      </ng-template>
+      <ng-template #modalContent1>
+
+      <div class="p-20"> 
+
+              <nz-alert *ngIf="errorMessage" nzType="error" nzMessage="{{errorMessage}}"></nz-alert>
+
+              <div class="form-group row">
+                  <label class="col-3 col-form-label">Nom</label>
+                  <div class="col-9">
+                      <input type="text" class="form-control" [(ngModel)]="user_update.name" placeholder="Nom">
+                      <span class="help-block"><small></small></span>
+                  </div>
+              </div>
+              <div class="form-group row">
+                  <label class="col-3 col-form-label">Prénom</label>
+                  <div class="col-9">
+                      <input type="text" class="form-control" [(ngModel)]="user_update.lastName" placeholder="Prénom">
+                      <span class="help-block"><small></small></span>
+                  </div>
+              </div>
+              <div class="form-group row">
+                  <label class="col-3 col-form-label">Email</label>
+                  <div class="col-9">
+                      <input type="text" class="form-control" [(ngModel)]="user_update.email" placeholder="Email">
+                      <span class="help-block"><small></small></span>
+                  </div>
+              </div>
+              <div class="form-group row">
+                  <label class="col-3 col-form-label">UserName</label>
+                  <div class="col-9">
+                      <input type="text" class="form-control" [(ngModel)]="user_update.username" placeholder="UserName">
+                      <span class="help-block"><small></small></span>
+                  </div>
+              </div>
+
+           
+      </div>
+
+
+ 
+
+      </ng-template>
+      <ng-template #modalFooter1>
+        <button nz-button nzType="default" (click)="isVisibleInfo=false">Annuler</button>
+        <button nz-button nzType="primary" [nzLoading]="isConfirmLoading" (click)="modifier1()">Modifier</button>
+      </ng-template>
+</nz-modal>
+
+
+<!--<nz-modal [(nzVisible)]="isVisiblePasse" [nzWidth]="500" [nzTitle]="modalTitle2" [nzContent]="modalContent2"  [nzFooter]="modalFooter2" (nzOnCancel)="isVisiblePasse=false">
+      <ng-template #modalTitle2>
+        Modifier mot de passe 
+      </ng-template>
+      <ng-template #modalContent2>
+
+      <div class="p-20"> 
+      
+              <div class="form-group row">
+                  <label class="col-3 col-form-label">Mo de passe actuel</label>
+                  <div class="col-9">
+                      <input type="password" class="form-control" (change)="verifier_password(mp_a)" [(ngModel)]="mp_a" placeholder="Nom">
+                      <span class="help-block"><small></small></span>
+                  </div>
+              </div>
+              <div class="form-group row" *ngIf="etat_password">
+                  <label class="col-3 col-form-label">Nouveau mot de passe </label>
+                  <div class="col-9">
+                      <input type="password" class="form-control" [(ngModel)]="mp_n" placeholder="Prénom">
+                      <span class="help-block"><small></small></span>
+                  </div>
+              </div>
+              <div class="form-group row" *ngIf="etat_password">
+                  <label class="col-3 col-form-label">Confirmer mot de passe</label>
+                  <div class="col-9">
+                      <input type="password" class="form-control" [(ngModel)]="mp_c" placeholder="Email">
+                      <span class="help-block"><small></small></span>
+                  </div>
+              </div>
+             
+      </div>
+ 
+
+      </ng-template>
+      <ng-template #modalFooter1>
+        <button nz-button nzType="default" (click)="isVisiblePasse=false">Annuler</button>
+        <button nz-button nzType="primary" (click)="modifier_password()" [nzLoading]="isConfirmLoading">Modifier</button>
+      </ng-template>
+</nz-modal>-->
+
+
+  <style type="text/css">
+  	
+  	:host ::ng-deep .avatar-uploader > .ant-upload, :host ::ng-deep .avatar {
+      width: 128px;
+      height: 128px;
+    }
+    :host ::ng-deep .ant-upload-select-picture-card i {
+      font-size: 32px;
+      color: #999;
+    }
+    :host ::ng-deep .ant-upload-select-picture-card .ant-upload-text {
+      margin-top: 8px;
+      color: #666;
+    }
+  </style>                          

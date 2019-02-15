@@ -1,0 +1,206 @@
+ <div class="row">
+                            <div class="col-lg-12">
+                                <div class="search-result-box card-box">
+                                   <h4 class="header-title">Listes des forumes <span class="pull-right">
+                                       <button nz-button nzType="primary" (click)="showModal()">
+                                              <span>Nouveau</span>
+                                        </button>
+                                   </span></h4>
+                                    <div><br/></div> 
+                                      <div *ngFor="let item of items | async" class="search-item">
+                                                <div class="media">
+                                                    <img class="d-flex mr-3 rounded-circle" src="assets/img/no-image.png" alt="Generic placeholder image" height="50">
+                                                    <div class="media-body">
+                                                        <h6 class="media-heading m-0 font-14">
+                                                            {{item.user}} 
+                                                            
+                                                            <button *ngIf="user.id==item.id" nz-popconfirm nzTitle="êtes-vous sûr de vouloir supprimer ce forum ?" (nzOnConfirm)="delete_forum(item.key)" nzOkText="Oui" nzCancelText="non" nzPlacement="leftBottom" nz-button class="pull-right"><i class="fa fa-trash"></i></button>
+
+
+
+                                                            <ng-template #contentTemplate>
+                                                              <div> 
+                                                              <textarea class="form-control" rows="3" nz-input placeholder="text" [(ngModel)]="to_update"></textarea>
+                                                              <br/>
+                                                              <button class="btn btn-sm btn-default" (click)="updateMsgItem(to_update,item,item.key)">Modifier</button>
+                                                              </div>
+                                                            </ng-template>
+
+                                                            <button nz-button nz-popover nzTitle="Modification" [nzContent]="contentTemplate" (click)="to_update=item.msg" class="pull-right" nzTrigger="click"><i class="fa fa-pencil"></i></button>
+
+                                                            <!--<button *ngIf="user.id==item.id" nz-popconfirm nzTitle="êtes-vous sûr de vouloir supprimer ce forum ?" (nzOnConfirm)="delete_forum(item.key)" nzOkText="Oui" nzCancelText="non" nzPlacement="leftBottom" nz-button class="pull-right"><i class="fa fa-trash"></i></button>-->
+   
+                                                            <!--<i class="pull-right danger fa fa-pencil"></i>-->
+                                                        </h6>
+                                                        <p class="m-b-0 font-14">
+                                                            <span class="text-muted"><b>Question: </b>{{item.msg}}
+                                                            <br> {{item.date| date:'yyyy-MM-dd HH:mm'}}
+                                                            </span>
+                                                        </p>
+                                                        <p (click)="show_comment(item)" class="m-b-0 font-14"> 
+                                                         <span style="cursor: pointer;margin-top: -30px;" class="pull-right">
+                                                          <i class="fa fa-arrow-{{item.show?'up':'down'}}"></i>&nbsp;  
+                                                         ({{item.reponses?item.reponses.length:0}}) commentaires&nbsp;
+                                                          <i class="fa fa-arrow-{{item.show?'up':'down'}}"></i>    
+                                                         </span>
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+
+                                                <!-- start reponse
+                                                 <div class="row" style="margin-left: 30px;" *ngFor="let reponse of item.reponses | async">-->
+                                            <div *ngIf="item.show" style=" background-color: #dedede;border-radius: 10px;">     
+
+                                                 <div class="row" style="margin-left: 30px;margin-right: 5px;"  *ngFor="let reponse of item.reponses | keyvalue; index as i">
+
+                                                     <div class="col-lg-12">
+                                                        <div class="search-item">
+                                                <div class="media">
+                                                    <img class="d-flex mr-3 rounded-circle" src="assets/img/no-image.png" alt="Generic placeholder image" height="42">
+                                                    <div class="media-body">
+                                                        <h6 class="media-heading m-0 font-13">
+                                                             {{reponse.value.user}}
+
+                                                             <button *ngIf="user.id==reponse.value.id" nz-popconfirm nzTitle="êtes-vous sûr de vouloir supprimer ce commentaire ?" (nzOnConfirm)="delete_comment(item.key,item,reponse,i)" nzOkText="Oui" nzCancelText="non" nzPlacement="leftBottom" nz-button class="pull-right"><i class="fa fa-trash"></i></button>
+
+                                                             <ng-template #contentTemplate1>
+                                                              <div> 
+                                                              <textarea class="form-control" rows="3" nz-input placeholder="text" [(ngModel)]="to_update_comment"></textarea>
+                                                              <br/>
+                                                              <button class="btn btn-sm btn-default" (click)="updateCommentItem(to_update_comment,item,item.key,reponse.value)">Modifier</button>
+                                                              </div>
+                                                            </ng-template>
+
+                                                            <button nz-button nz-popover nzTitle="Modification" [nzContent]="contentTemplate1" (click)="to_update_comment=reponse.value.msg" class="pull-right" nzTrigger="click"><i class="fa fa-pencil"></i></button>
+
+                                                        </h6>
+                                                        <p class="m-b-0 font-13">
+                                                            <span class="text-muted"><b>Commentaire: </b> {{reponse.value.msg}}                                                            <br>  {{reponse.value.date| date:'yyyy-MM-dd HH:mm'}}
+                                                            </span>
+                                                        </p>
+                                                        <p class="m-b-0 font-13"> 
+                                                         
+
+                                                         <span (click)="reponse.show=!reponse.show" style="cursor: pointer;margin-top: -30px;margin-right: 30px;" class="pull-right">
+                                                          <i class="fa fa-arrow-{{reponse.value.show?'up':'down'}}"></i>&nbsp;  
+                                                         ({{reponse.value.reponses?reponse.value.reponses.length:0}}) reponses&nbsp;
+                                                          <i class="fa fa-arrow-{{reponse.value.show?'up':'down'}}"></i>    
+                                                         </span>
+                                                        </p>
+                                                    </div>
+                                                 </div>
+                                                  <div class="row" style="background-color: #ececec;border-radius: 10px;margin-left: 60px;margin-right: 30px;">
+
+                                                     <div class="col-lg-12" *ngFor="let r of reponse.value.reponses | keyvalue">
+                                                    
+                                                         
+
+
+
+
+
+
+                                                    <div class="row">
+                                                     <div class="col-lg-12">
+                                                        <div class="search-item" style="padding-bottom: 0px;">
+                                                <div class="media" style="margin-top: 5px!important;">
+                                                    <img class="d-flex mr-3 rounded-circle" src="assets/img/no-image.png" alt="Generic placeholder image" height="36">
+                                                    <div class="media-body">
+                                                        <h6 class="media-heading m-0 font-12">
+                                                            {{r.value.user}} 
+                                                        </h6>
+                                                        <p class="m-b-0 font-12" style="margin-bottom: 5;">
+                                                            <span class="text-muted"><b>Reponse: </b>{{r.value.msg}}
+                                                            <br> {{r.value.date| date:'yyyy-MM-dd HH:mm'}}
+                                                            </span>
+                                                        </p>
+                                                    </div>
+                                                 </div>
+                                                   
+                                              
+
+
+                                                   </div>
+                                                     </div>
+                                                 </div>
+
+
+       
+
+
+
+
+
+                                                     </div>
+                                                  </div>
+                                                  <div><nz-input-group nzSearch [nzSuffix]="suffixIconButton">
+                                                          <input type="text" [(ngModel)]="reponse.reponse"  nz-input placeholder="input search text">
+                                                        </nz-input-group>
+                                                        <ng-template #suffixIconButton>
+                                                          <button nz-button nzType="primary" (click)="add_reponse(item,item.key,reponse)" nzSearch><i nz-icon type="caret-right"></i></button>
+                                                        </ng-template></div>
+
+
+                                                   </div>
+                                                     </div>
+                                                 </div>
+                                            </div>     
+
+                                                 <!-- end reponse-->
+
+
+
+                                                <div style="margin-top: 10px;">
+
+                                                    <nz-input-group nzSearch [nzSuffix]="suffixIconButton">
+                                                          <input type="text" [(ngModel)]="item.comment" nz-input placeholder="input search text">
+                                                    </nz-input-group>
+                                                    <ng-template #suffixIconButton>
+                                                      <button nz-button nzType="primary" (click)="add_comment(item.comment,item.key,item)" nzSearch><i nz-icon type="caret-right"></i></button>
+                                                    </ng-template>
+                                                   
+                                                </div>
+
+
+                                            </div>
+                                             
+                                        </div>
+                                        
+                                    
+                            </div>
+                        </div>
+
+
+
+
+
+     
+<nz-modal [(nzVisible)]="isVisible" [nzTitle]="modalTitle" [nzContent]="modalContent" [nzFooter]="null" (nzOnCancel)="handleCancel()">
+    
+      <ng-template #modalTitle>
+        Ajouter un nouveau forum
+      </ng-template>
+
+      <ng-template #modalContent>
+        <form nz-form  [formGroup]="validateForm" (ngSubmit)="handleOk(validateForm.value)">
+               <nz-form-item>
+                <nz-form-control>
+                  <nz-input-group [nzPrefix]="prefixUser">
+                    <textarea formControlName="forum" rows="5" nz-input placeholder="text"></textarea>
+                  </nz-input-group>
+                  <nz-form-explain *ngIf="validateForm.get('forum').dirty && validateForm.get('forum').errors">Please input your username!</nz-form-explain>
+               </nz-form-control>
+              </nz-form-item>
+              <nz-form-item>
+               <nz-form-control>
+                   <button nz-button nzType="default" (click)="handleCancel()">Annuler</button>
+                   <button nz-button nzType="primary" type="submit" [disabled]="!validateForm.valid" [nzLoading]="isConfirmLoading">Enregistrer</button>  
+               </nz-form-control>
+              </nz-form-item>
+        </form>      
+      </ng-template>
+ 
+      
+    </nz-modal>
+

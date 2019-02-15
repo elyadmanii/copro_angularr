@@ -1,0 +1,74 @@
+<div class="row"> 
+  <div class="col-lg-12">
+	<div class="search-result-box card-box">
+       <h4 class="header-title">gestion des groupes 
+	       <span class="pull-right">
+	           <button nz-button nzType="primary" (click)="isVisible=true">
+	                  <span>Nouveau</span>
+	            </button>
+	       </span>
+       </h4>
+	</div>
+  </div>
+</div> 
+
+
+<div class="row">
+    
+    <div class="col-lg-4" *ngFor="let g of groupes">
+         <div class="card-box task-detail">
+			<h5 class="m-b-5">Groupe : {{g.groupe.nom}}</h5> 
+            <div class="mt-3" *ngFor="let u of g.users">
+                <p *ngIf="u.coordinateur" class="float-right mb-0 mt-2">
+                    <b>Coordinateur</b>
+                </p>
+                <p class="mb-0"><a class="text-muted"><img src="{{g_var.url}}api/auth/files/{{u.user1.profil}}" alt="task-user" class="thumb-sm rounded-circle mr-2"> <span class="font-bold font-secondary">{{u.user1.name}}  {{u.user1.lastName}}</span></a> </p>
+            </div>
+         </div>
+
+    </div>  
+
+</div>
+
+<nz-modal [(nzVisible)]="isVisible" [nzWidth]="600" [nzTitle]="modalTitle" [nzContent]="modalContent"  [nzFooter]="modalFooter" (nzOnCancel)="isVisible=false">
+    
+      <ng-template #modalTitle>
+        Nouveau groupe
+      </ng-template>
+
+      <ng-template #modalContent>
+		   
+		<div class="row">
+                <label class="col-12 col-form-label">Nom *</label>
+                <div class="col-12">
+                    <input type="text" placeholder="Nom de groupe" class="form-control" [(ngModel)]="nom" />
+                </div>
+        </div>
+
+        <div class="row">
+                <label class="col-12 col-form-label">Eleves *</label>
+                <div class="col-12">
+                    <nz-select [nzMaxMultipleCount]="10" style="width: 100%" nzMode="multiple" nzPlaceHolder="Please select" [(ngModel)]="users_selected" (ngModelChange)="change_eleves()">
+				      <nz-option *ngFor="let g of eleves" [nzLabel]="g.name" [nzValue]="g"></nz-option>
+				    </nz-select>
+                </div>
+        </div>
+
+        <div class="row">
+                <label class="col-12 col-form-label">Coordinateur *</label>
+                <div class="col-12">
+                    <nz-select style="width: 100%;" [(ngModel)]="coordinateur" [nzSize]="size">
+				      <nz-option *ngFor="let option of users_selected" [nzLabel]="option.name" [nzValue]="option"></nz-option>
+				    </nz-select>
+                </div>
+        </div>
+
+
+        
+
+      </ng-template>
+      <ng-template #modalFooter> 
+        <button nz-button nzType="default" (click)="isVisible=false">Annuler</button>
+        <button nz-button nzType="primary" [nzLoading]="isOkLoading" [disabled]="!nom || !coordinateur" (click)="ajouter()">Confirmer</button>
+      </ng-template>
+</nz-modal>

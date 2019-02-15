@@ -1,0 +1,61 @@
+<div class="slimscroll-menu" id="remove-scroll"> 
+    <div class="topbar-left">
+        <a class="logo">
+            <span>
+                <img src="assets/vertical/assets/images/logo.png" alt="" height="50">
+            </span>
+            <i>
+                <img src="assets/vertical/assets/images/logo_sm.png" alt="" height="28">
+            </i>
+        </a>
+    </div> 
+    <div class="user-box">
+        <div class="user-img">
+            <img src="{{g_var.url}}api/auth/files/{{user.profil}}?x={{g_var.timer}}" width="60" height="60" class="rounded-circle">
+        </div>
+        <h5><a routerLink="user">{{user.name}} </a> </h5>
+        <p class="text-muted">{{user.lastName}}</p>
+    </div> 
+    <div id="sidebar-menu">
+        <ul class="metismenu" id="side-menu">
+            <li>
+                <a routerLink="home">
+                    <i class="fa fa-dashboard"></i><span> Dashboard </span>
+                </a>
+            </li>
+            <li *ngIf="authority=='eleve'||authority=='professeur'">
+                <a routerLink="projets">
+                    <i class="fa fa-suitcase"></i> <span> Projets </span>
+                </a>
+            </li>
+            <li *ngIf="authority=='professeur'">
+                <a routerLink="users">
+                    <i class="fa fa-user-plus"></i> <span> Gestion des Utilisateur </span>
+                </a>
+            </li>
+            <li *ngIf="authority=='eleve'">
+                <a routerLink="groupes">
+                    <i class="fa fa-users"></i> <span> Mes groupes </span>
+                </a>
+            </li>
+            <li *ngIf="authority=='professeur'">
+                <a routerLink="gestion_groupes">
+                    <i class="fa fa-users"></i> <span> Gestion des groupes </span>
+                </a>
+            </li>
+
+            
+            <li *ngIf="authority=='eleve'||authority=='professeur'">
+                <a routerLink="forums">
+                    <i class="fa fa-comments-o"></i> <span> Forumes </span>
+                </a>
+            </li>
+            <li *ngIf="authority=='eleve'||authority=='professeur'">
+                <a routerLink="discussion">
+                    <i class="fa fa-wechat"></i> <span> Discussion </span>
+                </a>
+            </li> 
+        </ul>
+    </div> 
+    <div class="clearfix"></div>
+</div> 

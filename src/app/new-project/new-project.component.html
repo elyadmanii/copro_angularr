@@ -1,0 +1,233 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="search-result-box card-box">
+           <h4 class="header-title">Nouveau projet</h4>     
+        </div>
+    </div>
+</div>
+
+
+<div class="row"> 
+	<div class="col-xl-12">
+        <div class="card-box">
+
+        <nz-steps [nzCurrent]="current">
+	      <nz-step nzTitle="Projet et Groupes"></nz-step>
+	      <nz-step nzTitle="Phases et Taches"></nz-step>
+	    </nz-steps>
+
+	    <div class="steps-content">
+			
+			<div *ngIf="current==0">
+			    	<div class="row">
+                            <label class="col-12 col-form-label">Nom *</label>
+                            <div class="col-12">
+                                <input type="text" placeholder="Nom du projet" class="form-control" [(ngModel)]="nom" />
+                            </div>
+                    </div>
+
+                    <div class="row">
+                            <label class="col-12 col-form-label">Description *</label>
+                            <div class="col-12">
+                                <textarea class="form-control" placeholder="Description" [(ngModel)]="description" rows="5"></textarea>
+                            </div>
+                    </div>
+
+                    <div class="row">
+                            <label class="col-12 col-form-label">Durée du projet *</label>
+                            <div class="col-12">
+                                    <nz-range-picker 
+								      [(ngModel)]="date"
+								      (ngModelChange)="onChange($event)"
+								    ></nz-range-picker>
+                            </div>
+                    </div>
+                    <div class="row">
+                            <label class="col-12 col-form-label">Groupes *</label>
+                            <div class="col-12">
+	                            <nz-select [nzMaxMultipleCount]="10" style="width: 100%" nzMode="multiple" nzPlaceHolder="Please select" [(ngModel)]="groupes_selected">
+							      <nz-option *ngFor="let g of groupes" [nzLabel]="g.nom" [nzValue]="g.id"></nz-option>
+							    </nz-select>
+                            </div>
+                    </div>
+
+
+
+                    
+
+			</div>	
+			<div *ngIf="current==1">
+
+                <button type="button" (click)="showModal()" class="btn btn-success waves-effect waves-light btn-sm pull-right">
+                <i class="fa fa-plus m-r-5"></i>Phase</button> 
+                <br/><br/><br/>  
+
+				<nz-collapse nzAccordion>
+                  <nz-collapse-panel *ngFor="let p of phases" [nzHeader]="p.nom" [nzActive]="p.active">
+                    <p><b>{{p.nom}}</b>
+
+                    <button type="button" (click)="showModalTache(p)" class="btn btn-success waves-effect waves-light btn-sm pull-right"><i class="fa fa-plus m-r-5"></i>Tache</button>
+
+                    <br/>
+                       {{p.description}} 
+                       <br/>
+                       Du {{p.date[0] | date:"MM-dd-yyyy"}} Au {{p.date[1] | date:"MM-dd-yyyy"}}  
+                    </p>
+                    <br/>
+
+                    <table class="table mb-0">
+                        <thead>
+                        <tr>
+                            
+                            <th>nom</th>
+                            <th>Description</th>
+                            <th>Date début</th>
+                            <th>Date Fin</th>
+                            <th>#</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let t of p.taches">
+                            <td>{{t.nom}}</td>
+                            <td>{{t.description}} 
+                            <button nz-button nz-popover nzTitle="Description" [nzContent]="contentTemplate" nzTrigger="hover">{{t.description}}</button>
+                             <ng-template #contentTemplate>
+                              <div>
+                                <p>{{t.description}}</p>
+                              </div>
+                            </ng-template>
+
+                            </td>
+                            <td>{{t.date[0] | date:"MM-dd-yyyy"}}</td>
+                            <td>{{t.date[1] | date:"MM-dd-yyyy"}}</td>
+                            <td></td>
+                        </tr>
+                        
+                        </tbody>
+                    </table>
+                    
+                  </nz-collapse-panel>
+                </nz-collapse>
+
+
+
+
+
+
+                <nz-modal [(nzVisible)]="isVisible" [nzWidth]="600" [nzTitle]="modalTitle1" [nzContent]="modalContent1"  [nzFooter]="modalFooter1" (nzOnCancel)="handleCancel()">
+    
+                      <ng-template #modalTitle1>
+                        Nouvelle phase
+                      </ng-template>
+
+                      <ng-template #modalContent1>
+                        <div class="row">
+                            <label class="col-12 col-form-label">Nom</label>
+                            <div class="col-12">
+                                <input type="text" placeholder="Nom de la phase" class="form-control" [(ngModel)]="phase.nom" />
+                            </div>
+                        </div>
+
+                        <div class="row">
+                                <label class="col-12 col-form-label">Description</label>
+                                <div class="col-12">
+                                    <textarea class="form-control" placeholder="Description" [(ngModel)]="phase.description" rows="5"></textarea>
+                                </div>
+                        </div>
+
+                        <div class="row">
+                                <label class="col-12 col-form-label">Durée de la phase</label>
+                                <div class="col-12">
+                                        <nz-range-picker 
+                                          [(ngModel)]="phase.date"
+                                          (ngModelChange)="onChange($event)"
+                                        ></nz-range-picker>
+                                </div>
+                        </div>
+                      </ng-template>
+
+                      <ng-template #modalFooter1> 
+                        <button nz-button nzType="default" (click)="handleCancel()">Annuler</button>
+                        <button nz-button nzType="primary" [nzLoading]="isOkLoading" [disabled]="!phase.description || !phase.nom" (click)="ajouter_phase()">Ajouter</button>
+                      </ng-template>
+                  
+                </nz-modal>
+
+
+                <nz-modal [(nzVisible)]="isVisibleTache" [nzWidth]="600" [nzTitle]="modalTitle" [nzContent]="modalContent"  [nzFooter]="modalFooter" (nzOnCancel)="cancel_tache()">
+    
+                      <ng-template #modalTitle>
+                        Nouvelle tache
+                      </ng-template>
+
+                      <ng-template #modalContent>
+                        <div class="row">
+                            <label class="col-12 col-form-label">Nom</label>
+                            <div class="col-12">
+                                <input type="text" placeholder="Nom de la tache" class="form-control" [(ngModel)]="tache.nom" />
+                            </div>
+                        </div>
+
+                        <div class="row">
+                                <label class="col-12 col-form-label">Description</label>
+                                <div class="col-12">
+                                    <textarea class="form-control" placeholder="Description" [(ngModel)]="tache.description" rows="5"></textarea>
+                                </div>
+                        </div>
+
+                        <div class="row">
+                                <label class="col-12 col-form-label">Durée de la tache</label>
+                                <div class="col-12">
+                                        <nz-range-picker 
+                                          [(ngModel)]="tache.date"
+                                          (ngModelChange)="onChange($event)"
+                                        ></nz-range-picker>
+                                </div>
+                        </div>
+                      </ng-template>
+
+                      <ng-template #modalFooter> 
+                        <button nz-button nzType="default" (click)="cancel_tache()">Annuler</button>
+                        <button nz-button nzType="primary"  [disabled]="!tache.description || !tache.nom" (click)="ajouter_tache()">Ajouter</button>
+                      </ng-template>
+                  
+                </nz-modal>
+
+
+
+
+			</div>	
+			 
+	    </div>
+	    <div class="steps-action">
+	      <button nz-button nzType="default" (click)="pre()" *ngIf="current > 0">
+	        <span>Précédent</span>
+	      </button>
+	      <button nz-button nzType="default" [disabled]="!date || !description || !nom || (groupes_selected.length==0)" (click)="next()" *ngIf="current < 1">
+	        <span>Suivant</span>
+	      </button>
+	      <button nz-button nzType="primary" (click)="add_project()" *ngIf="current === 1">
+	        <span>Confirmer</span>
+	      </button>
+	    </div>
+
+        </div>
+	</div>
+</div>
+
+
+<style type="text/css">
+	.steps-content {
+        margin-top: 16px;
+        min-height: 300px;
+        padding: 10px;
+      }
+
+      .steps-action {
+        margin-top: 24px;
+      }
+
+      button {
+        margin-right: 8px;
+      }
+</style>

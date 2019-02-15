@@ -1,0 +1,241 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="search-result-box card-box">
+           <h4 class="header-title" (click)="list=true" style="cursor: pointer;">Mes projets</h4>     
+        </div>
+    </div>
+</div>
+
+<div *ngIf="list" class="row"> 
+<div class="col-xl-4" *ngFor="let p of projet">
+                                <div class="card-box project-box">
+                                    <h4 class="mt-0 mb-3"><a (click)="show_detail(p)" class="text-dark">{{p.projet.nom}}</a>
+										<i class="fa fa-eye" (click)="show_detail(p)" style="float: right;cursor: pointer;"></i> 
+                                    </h4>
+                                    <p class="text-muted font-13">
+                                    	{{p.projet.description}}			
+                                    <a   class="font-600 text-muted" (click)="show_detail(p)">Voire plus</a>
+                                    </p>
+
+
+
+
+
+
+                                    <ul class="list-inline">
+                                        <li class="list-inline-item">
+                                            <h3 class="mb-0">{{p.nbr_phase}}</h3>
+                                            <p class="text-muted">Phases</p>
+                                        </li>
+                                        <li class="list-inline-item">
+                                            <h3 class="mb-0">{{p.nbr_tache}}</h3>
+                                            <p class="text-muted">Taches</p>
+                                        </li>
+                                        <li class="list-inline-item">
+                                            <h3 class="mb-0">{{p.nbr_sous_tache}}</h3>
+                                            <p class="text-muted">Sous taches</p>
+                                        </li>
+                                    </ul>
+
+                                    <div class="project-members mb-4" *ngFor="let g of p.groupes">
+                                        <label class="mr-3">{{g.groupe.nom}} :</label>
+                                        <a *ngFor="let u of g.users" title="{{u.user1.name}}  {{u.user1.lastName}}">
+                                            <img src="{{g_var.url}}api/auth/files/{{u.user1.profil}}" class="rounded-circle thumb-sm" alt="friend" />
+                                        </a>
+                                    </div>
+
+                                    <label class="">Tache complet: <span class="text-custom">{{p.nbr_complet}}/{{p.nbr_tache}}</span></label>
+                                    
+                                    <nz-progress [nzPercent]="p.percent"></nz-progress>
+
+                                </div>
+                            </div>
+ </div>
+
+ <div class="row" *ngIf="!list">
+                            <div class="col-lg-8">
+                                <div class="card-box task-detail" *ngIf="!show_tache">
+                                    <h4 class="m-b-20">{{detail.projet.nom}}</h4>
+
+                                    <p class="text-muted">
+                                        {{detail.projet.description}}
+                                    </p>
+ 
+                                    <ul class="list-inline task-dates m-b-0 mt-5">
+                                        <li>
+                                            <h5 class="m-b-5">Date Début</h5>
+                                            <p> {{detail.projet.dateDebut| slice:0:10}}</p>
+                                        </li>
+
+                                        <li>
+                                            <h5 class="m-b-5">Date Fin</h5>
+                                            <p> {{detail.projet.dateFin| slice:0:10}}</p>
+                                        </li>
+                                    </ul>
+
+                                    <div class="clearfix"></div>
+  
+                                    <div class="assign-team mt-4" *ngFor="let g of detail.groupes">
+                                        <h5 class="m-b-5">{{g.groupe.nom}}</h5>
+                                        <div>
+                                            <a *ngFor="let u of g.users" title="{{u.user1.name}}  {{u.user1.lastName}}"> <img class="rounded-circle thumb-sm" alt="64x64" src="{{g_var.url}}api/auth/files/{{u.user1.profil}}"> </a> 
+                                        </div>
+                                    </div>
+
+                                    <div class="attached-files mt-4">
+                                        <h5 class="">les documents de projet </h5>
+                                        <div class="files-list">
+                                            <div class="file-box" *ngFor="let d of detail.documentProjets">
+                                                <a href="{{g_var.url}}api/auth/docs/{{d.document}}" target="_blank"><img src="assets/img/file.png" class="img-responsive img-thumbnail" alt="attached-img"></a>
+                                                <p class="font-13 mb-1 text-muted"><small>{{d.document}}</small></p>
+                                                
+                                                <a nz-popconfirm nzTitle="êtes-vous sûr de vouloir supprimer ce document ?" (nzOnConfirm)="delete_document(d.id)" nzOkText="Oui" nzCancelText="non" nzPlacement="rightBottom">Supprimer</a>
+
+                                            </div>
+                                            <div class="file-box ml-3">
+                                                <a (click)="showModalDoc()"><span class="add-new-plus"><i class="mdi mdi-plus"></i> </span></a>
+                                            </div>
+                                        </div>                                        
+                                    </div>
+
+                                </div>
+
+                                <div class="card-box task-detail" *ngIf="show_tache">
+                                	<h4 class="m-b-20">Tache : {{tache.tache.nom}}</h4>
+									<p class="text-muted">
+                                        {{tache.tache.description}}
+                                    </p>
+
+                                    <div class="attached-files mt-4">
+                                        <h5 class="">Production de la tache </h5>
+                                        <div class="files-list">
+                                            <div *ngIf="get_my_production(tache)" class="file-box">
+                                                <a  href="{{g_var.url}}api/auth/production/{{get_my_production(tache).document}}" target="_blank"><img src="assets/img/file.png" class="img-responsive img-thumbnail" alt="attached-img"></a>
+                                                <p class="font-13 mb-1 text-muted"><small>{{get_my_production(tache).document}}</small></p>
+                                            </div>
+                                            <div *ngIf="!get_my_production(tache)" class="file-box ml-3">
+                                                <a><span class="add-new-plus" (click)="showModal()"><i class="mdi mdi-plus"></i> </span></a>
+                                            </div>
+                                            <div *ngIf="get_my_production(tache)" class="file-box ml-3">
+                                                 <a nz-popconfirm nzTitle="êtes-vous sûr de vouloir supprimer votre production ?" (nzOnConfirm)="delete_production(get_my_production(tache))" nzOkText="Oui" nzCancelText="non" nzPlacement="rightBottom"><span class="add-new-plus"><i class="mdi mdi-close"></i></span></a>
+
+                                            </div>
+                                        </div>                                        
+                                    </div>
+
+                                    <div>
+										<h5 class="">Les sous taches ({{tache.sousTaches.length}})</h5>
+										<ul style="padding-left: 15px!important;" *ngFor="let s of tache.sousTaches" >
+											<li>
+												<p class="m-b-0 font-13" style="margin-bottom: 0;"><b>{{s.nom}}</b></p> 
+												<p class="m-b-0 font-13" style="margin-bottom: 0;">{{s.description}}</p>
+							   				</li>
+										</ul>
+                                    </div>
+
+                                </div>
+                            </div><!-- end col -->
+
+                            <div class="col-lg-4">
+                                <div class="card-box" *ngFor="let p of detail.phases">
+                                    <div>
+                                       <h5>{{p.phase.nom}}</h5> 
+                                       <p class="text-muted">{{p.phase.dateDebut| slice:0:10}} &nbsp; <i class="fa fa-arrow-right"></i>&nbsp;{{p.phase.dateFin| slice:0:10}} </p>
+                                        <p (click)="p.show=!p.show" class="m-b-0 font-13"> 
+                                         <span style="cursor: pointer;" class="pull-right">
+                                          <i class="fa fa-arrow-{{p.show?'up':'down'}}"></i>&nbsp;  
+                                         ({{p.taches?p.taches.length:0}}) taches&nbsp;
+                                          <i class="fa fa-arrow-{{p.show?'up':'down'}}"></i>    
+                                         </span>
+                                        </p>
+                                        <br/> 
+                                        <div *ngIf="p.show">
+	                                        <div *ngFor="let t of p.taches" [ngStyle]="{'background-color':is_my_task(t)==true ? '#e8e8e8' : ''}">
+	                                        	<div style="margin-left: 15px;">
+	                                        		<h6 style="padding-top: 5px;"><a (click)="show_task(t)" *ngIf="is_my_task(t)"><i class="fa fa-tasks"></i></a>&nbsp; {{t.tache.nom}}   
+
+
+	                                        		<div *ngIf="cordinateur"><a *ngIf="get_production(t)" href="{{g_var.url}}api/auth/production/{{get_production(t).document}}" target="_blank"><i class="fa fa-download pull-right" style="    padding-right: 10px;padding-top: 5px;"></i></a></div>
+
+	                                        		</h6>	
+	                                        		<p class="text-muted font-12">{{t.tache.dateDebut| slice:0:10}} &nbsp; <i class="fa fa-arrow-right"></i>&nbsp;{{t.tache.dateFin| slice:0:10}} </p>
+	                                        	</div>
+	          								</div>
+          								</div>
+
+                                    </div>
+                                </div>
+                            </div><!-- end col -->
+                        </div>
+  
+
+                 <nz-modal [(nzVisible)]="isVisible" [nzWidth]="400" [nzTitle]="modalTitle" [nzContent]="modalContent"  [nzFooter]="modalFooter" (nzOnCancel)="handleCancel()">
+    
+				      <ng-template #modalTitle>
+				        Production de la tache
+				      </ng-template>
+
+				      <ng-template #modalContent>
+
+
+				      <div class="clearfix">
+					    <nz-upload
+					      nzAction=""
+					      nzListType="picture-card"
+					      [(nzFileList)]="fileList"
+					      [nzShowButton]="fileList.length < 1"
+					      [nzPreview]="handlePreview">
+					        <i nz-icon type="plus"></i>
+					        <div class="ant-upload-text">Upload</div>
+					    </nz-upload>
+					    <nz-modal [nzVisible]="previewVisible" [nzContent]="modalContent" [nzFooter]="null" (nzOnCancel)="previewVisible=false">
+					      <ng-template #modalContent>
+					        <img [src]="previewImage" [ngStyle]="{ 'width': '100%' }" />
+					      </ng-template>
+					    </nz-modal>
+					  </div>
+
+				      </ng-template>
+
+				      <ng-template #modalFooter>
+				        <span>Modal Footer: </span>
+				        <button nz-button nzType="default" (click)="handleCancel()">Annuler</button>
+				        <button nz-button nzType="primary" (click)="handleOk()">Confirmer</button>
+				      </ng-template>
+				  
+				</nz-modal>
+
+                <nz-modal [(nzVisible)]="isVisibleDoc" [nzWidth]="400" [nzTitle]="modalTitle1" [nzContent]="modalContent1"  [nzFooter]="modalFooter1" (nzOnCancel)="isVisibleDoc=false">
+    
+                      <ng-template #modalTitle1>
+                        Document du projet 
+                      </ng-template>
+
+                      <ng-template #modalContent1>
+
+
+                      <div class="clearfix">
+                        <nz-upload
+                          nzAction=""
+                          nzListType="picture-card"
+                          [(nzFileList)]="fileList"
+                          [nzShowButton]="fileList.length < 1"
+                          [nzPreview]="handlePreview">
+                            <i nz-icon type="plus"></i>
+                            <div class="ant-upload-text">Upload</div>
+                        </nz-upload>
+                        <nz-modal [nzVisible]="previewVisible" [nzContent]="modalContent" [nzFooter]="null" (nzOnCancel)="previewVisible=false">
+                          <ng-template #modalContent>
+                            <img [src]="previewImage" [ngStyle]="{ 'width': '100%' }" />
+                          </ng-template>
+                        </nz-modal>
+                      </div>
+
+                      </ng-template>
+
+                      <ng-template #modalFooter1> 
+                        <button nz-button nzType="default" (click)="isVisibleDoc=false">Annuler</button>
+                        <button nz-button nzType="primary" (click)="ajouter_doc()">Ajouter</button>
+                      </ng-template>
+                  
+                </nz-modal>

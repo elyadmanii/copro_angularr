@@ -1,0 +1,23 @@
+<app-sidebar *ngIf="connect"  class="left side-menu side-menu-sm"></app-sidebar>
+
+<div class="{{connect?'content-page':''}}">
+
+<app-header *ngIf="connect" class="topbar"></app-header>
+
+  <div class="content">
+    <div class="container-fluid">
+
+     <router-outlet></router-outlet>
+
+   </div> 
+
+ </div>
+ 
+
+<footer class="footer" style="display: none!important">
+    2018 © Highdmin. - Coderthemes.com
+</footer>
+
+</div>
+
+
