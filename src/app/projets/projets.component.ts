@@ -20,8 +20,11 @@ export class ProjetsComponent implements OnInit {
   tache= <any>{}; 
   list=true;
   cordinateur:boolean=false;
+  isVisibleProd:boolean=false;
   show_tache=false;
   user: any;
+  authority:string="";
+  roles= [];
 
   constructor(private token: TokenStorageService,
   			  private init: InitAppService,
@@ -33,6 +36,19 @@ export class ProjetsComponent implements OnInit {
 
   ngOnInit() { 
   	this.user=this.token.getUser();
+    this.roles = this.token.getAuthorities();
+    this.roles.every(role => {
+        if (role === 'ROLE_PROFESSEUR') {
+          this.authority = 'professeur';
+          return false;
+        } else if (role === 'ROLE_ELEVE') {
+          this.authority = 'eleve';
+          return false;
+        }
+        this.authority = 'admin';
+        return true;
+    });
+
     this.authService.inits().subscribe(
       response => {
          this.projet=response.projets2;
@@ -40,12 +56,13 @@ export class ProjetsComponent implements OnInit {
          this.projet_statistique(this.projet);
        },
       error => {
-        console.log(error);
+        //console.log(error);
       }
     );
   } 
-  projet_statistique(projets) {
-      for(var i=0;i<projets.length;i++){
+  projet_statistique(projets){
+      console.log("projets",projets);
+      /*for(var i=0;i<projets.length;i++){
          projets[i].nbr_phase=0;
          projets[i].nbr_tache=0;
          projets[i].nbr_sous_tache=0;
@@ -62,12 +79,49 @@ export class ProjetsComponent implements OnInit {
          projets[i].percent=projets[i].nbr_tache==0?0:(projets[i].nbr_complet*100/projets[i].nbr_tache).toFixed(2);
 
 
+      }*/
+      
+
+      for(var i=0;i<projets.length;i++){
+          for(var j=0;j<projets[i].groupes.length;j++){
+            this.statistique(projets[i],projets[i].groupes[j]);
+          }
       }
+      
  
   }
 
+  statistique(projet,groupe){ 
+
+     projet.nbr_phase=0;
+     projet.nbr_tache=0;
+     projet.nbr_sous_tache=0;
+     projet.nbr_complet=0;
+     projet.nbr_phase=projet.phases.length;
+
+     for(var j=0;j<projet.phases.length;j++){
+
+        projet.nbr_tache+=projet.phases[j].taches.length;
+        for(var k=0;k<projet.phases[j].taches.length;k++){
+           projet.nbr_sous_tache+=projet.phases[j].taches[k].sousTaches.length;
+           projet.nbr_complet+=projet.phases[j].taches[k].productionTaches.length; 
+           this.count_tache_complet(projet.phases[j].taches[k],groupe);
+        }
+     
+     }
+
+     projet.percent=projet.nbr_tache==0?0:(projet.nbr_complet*100/projet.nbr_tache).toFixed(2); 
+  }
+
+  count_tache_complet(tache,groupe){
+      console.log(tache);
+      console.log(groupe);
+      var count=0;
+
+  }
+
   show_detail(p): void {
-    console.log(p);
+    //console.log(p);
     this.list=false; 
     this.detail=p;
     this.show_tache=false;
@@ -76,7 +130,7 @@ export class ProjetsComponent implements OnInit {
 
 
   show_task(t): void {
-    console.log(t);
+    //console.log(t);
     t.show=!t.show;
     this.show_tache=!this.show_tache;
     this.tache=t; 
@@ -111,7 +165,7 @@ export class ProjetsComponent implements OnInit {
 
   handleOk(): void {
     this.isVisible = false;
-    console.log(this.fileList[0].originFileObj);
+    //console.log(this.fileList[0].originFileObj);
     this.formData.append('file', this.fileList[0].originFileObj);
     this.formData.append('tache_id', this.tache.tache.id);
     this.formData.append('eleve_id', this.user.id);
@@ -119,7 +173,7 @@ export class ProjetsComponent implements OnInit {
           data => {
             this.fileList=[];
             this.formData=new FormData();
-            console.log(data);
+            //console.log(data);
             this.tache.productionTaches.push(data);
             this.notification.create('success', 'Production',
                'ajouté avec succès');  
@@ -136,14 +190,14 @@ export class ProjetsComponent implements OnInit {
 
   ajouter_doc(): void {
     this.isVisibleDoc = false;
-    console.log(this.fileList[0].originFileObj);
+    //console.log(this.fileList[0].originFileObj);
     this.formData.append('file', this.fileList[0].originFileObj);
     this.formData.append('projet_id', this.detail.projet.id); 
     this.authService.document_projet(this.formData).subscribe(
           data => {
             this.fileList=[];
             this.formData=new FormData();
-            console.log(data);
+            //console.log(data);
             this.detail.documentProjets.push(data);
             this.notification.create('success', 'Document',
                'ajouté avec succès');   
@@ -158,7 +212,7 @@ export class ProjetsComponent implements OnInit {
   }
 
   delete_production(production){ 
-    console.log(production);
+    //console.log(production);
     this.formData=new FormData();
     this.formData.append('id', production.id);
     this.authService.production_delete(this.formData).subscribe(
@@ -211,22 +265,22 @@ export class ProjetsComponent implements OnInit {
   }
 
   get_my_production(tache){ 
+    //console.log("tache",tache);
     for(var i=0;i<tache.productionTaches.length;i++){
       if(tache.productionTaches[i].eleve.id==this.user.id && tache.productionTaches[i].tache1.id==tache.tache.id){
+        //console.log("productionTaches",tache.productionTaches[i]);
         return tache.productionTaches[i];
       }
     }
     return null;
   }
   
-  get_production(tache){ 
+  get_production(tache){  
     for(var i=0;i<tache.productionTaches.length;i++){
-      if(tache.productionTaches[i].tache1.id==tache.tache.id){
-        //console.log({etat:true,production:tache.productionTaches[i]})
+      if(tache.productionTaches[i].tache1.id==tache.tache.id){ 
         return tache.productionTaches[i];
       }
-    }
-    //console.log({etat:true,production:null})
+    } 
     return null;
   }
 
@@ -250,7 +304,16 @@ export class ProjetsComponent implements OnInit {
 	        }
 	     }  
      }
-     return null;
+     return {id:0};
   } 
+  
+  productions=[];
+  show_productions(tache){
+     console.log(tache);
+     this.isVisibleProd=true; 
+     this.productions=tache.productionTaches;
+  } 
+
+  
 
 }

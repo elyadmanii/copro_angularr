@@ -1,12 +1,131 @@
-<div *ngIf="info.token; else loggedOut">
-  <h5 class="text-primary">Your Information</h5>
-  <p>
-    <strong>Username:</strong> {{info.username}}<br/>
-    <strong>Roles:</strong> {{info.authorities}}<br />
-    <strong>Token:</strong> {{info.token}}.
-  </p>
- </div>
+<style type="text/css">
+	.row-home{
+		border-top: 2px solid #dde2dd!important;
+    	padding-top: 15px!important;
+	}
+	.carousel-content{
+      text-align: center;
+      height: 360px;
+      line-height: 160px;
+      background: #364d79;
+      color: #fff;
+      overflow: hidden;
+    }
+</style>
 
-<ng-template #loggedOut>
-  Please login.
-</ng-template>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card-box">
+
+		    <nz-carousel nzAutoPlay>
+		      <div class="carousel-content" nz-carousel-content *ngFor="let index of array">
+		        
+		       <img src="assets/img/home/{{index}}.png" style="height: 360px;">
+
+		       </div>
+		    </nz-carousel>
+	
+		</div>
+	</div>
+</div>		    
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card-box">
+	        <div style="text-align: center;">
+	        	<img src="assets/img/coproline.png" style="width: 300px;height: auto;">
+	        </div>
+	        <div class="row">
+	          <div class="col-lg-12">
+	           <p  class="text-muted" style="font-size: 18px;color: #6f6f6f!important;">
+	           	<b>Coproline</b> est une plate-forme d'apprentissage en ligne et de travail collaboratif. Elle permet de créer et d'administrer des projets et des espaces de collaboration en ligne.<br/>
+				Parce qu’aujourd’hui, apprendre ce n’est plus simplement mémoriser des contenus, <b>Coproline</b> veut mettre tout le potentiel de la technologie au service de l’apprentissage.<br/>
+				Chacun est responsable de son apprentissage, mais c’est avec les autres qu’on apprend le mieux. Grâce aux outils collaboratifs de <b>Coproline</b>, vous pourrez exploiter toute la puissance du groupe.
+
+	           </p>
+	           </div>
+	        </div>
+
+	        <div class="row">
+	          <div class="col-lg-2">
+	          <br/>
+	          <br/>
+	          </div>
+	        </div>  
+
+	        <div class="row row-home">
+	          <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12" style="text-align: center;font-size: 20px;color: #00b7d3!important;cursor: pointer;">
+	             <i class="fa fa-suitcase"></i><br/> 
+	             <span> Projets <br/> </span>
+	          </div>
+	          <div class="col-lg-10 col-md-9 col-sm-12 col-xs-12">
+	             <p  class="text-muted" style="font-size: 18px;color: #6f6f6f!important;">
+	             C’est là où on commence, vous pouvez consulter vos tâches à exécuter, et les mettre en ligne.
+	             </p>
+	          </div>
+	        </div>  
+
+	        <div class="row">
+	          <div class="col-lg-2">
+	          <br/>
+	          </div>
+	        </div>  
+
+
+	        <div class="row row-home">
+	          <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12" style="text-align: center;font-size: 20px;color: #00b7d3!important;cursor: pointer;">
+	             <i class="fa fa-users"></i><br/> 
+	             <span> Mes groupes <br/> </span>
+
+	          </div>
+	          <div class="col-lg-10 col-md-9 col-sm-12 col-xs-12">
+	             <p  class="text-muted" style="font-size: 18px;color: #6f6f6f!important;">
+	             Ici vous pouvez consulter la liste des apprenants qui appartiennent au même groupe et aussi de les contacter par E-mail, et encore de connaître le coordinateur du groupe désigné par l’enseignant. 
+	             </p>
+	          </div>
+	        </div> 
+
+
+	        <div class="row">
+	          <div class="col-lg-2">
+	          <br/>
+	          </div>
+	        </div>  
+
+
+
+	        <div class="row row-home">
+	          <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12" style="text-align: center;font-size: 20px;color: #00b7d3!important;cursor: pointer;">
+	             <i class="fa fa-comments-o"></i><br/> 
+	             <span> Forums <br/> </span>
+	          </div>
+	          <div class="col-lg-10 col-md-9 col-sm-12 col-xs-12">
+	             <p  class="text-muted" style="font-size: 18px;color: #6f6f6f!important;">
+	             L’outil de forum est destiné à poser des questions au public et d’y répondre. Les questions de forums.
+	             </p>
+	          </div>
+	        </div> 
+
+
+	        <div class="row">
+	          <div class="col-lg-2">
+	          <br/>
+	          </div>
+	        </div>  
+
+
+	        <div class="row row-home">
+	          <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12" style="text-align: center;font-size: 20px;color: #00b7d3!important;cursor: pointer;">
+	             <i class="fa fa-wechat"></i><br/> 
+	             <span> Discussions <br/> </span>
+	          </div>
+	          <div class="col-lg-10 col-md-9 col-sm-12 col-xs-12">
+	             <p  class="text-muted" style="font-size: 18px;color: #6f6f6f!important;">
+	             En cliquant sur le menu Discussion, la liste des chambres de discussion s’affiche. Vous pouvez alors rejoindre une discussion existante ou bien créer une nouvelle. Vous pouvez effectuer une discussion avec un seul élément ou avec tout le groupe.
+	             </p>
+	          </div>
+	        </div>  
+
+        </div>
+    </div>
+</div>	

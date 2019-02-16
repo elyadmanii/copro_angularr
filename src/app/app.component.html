@@ -1,8 +1,8 @@
-<app-sidebar *ngIf="connect"  class="left side-menu side-menu-sm"></app-sidebar>
+<app-sidebar *ngIf="tokenStorage.isconnect"  class="left side-menu side-menu-sm"></app-sidebar>
 
-<div class="{{connect?'content-page':''}}">
+<div class="{{tokenStorage.isconnect?'content-page':''}}">
 
-<app-header *ngIf="connect" class="topbar"></app-header>
+<app-header *ngIf="tokenStorage.isconnect" class="topbar"></app-header>
 
   <div class="content">
     <div class="container-fluid">

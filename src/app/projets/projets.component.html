@@ -15,11 +15,9 @@
                                     <p class="text-muted font-13">
                                     	{{p.projet.description}}			
                                     <a   class="font-600 text-muted" (click)="show_detail(p)">Voire plus</a>
+                                    <br/>
                                     </p>
-
-
-
-
+                                     
 
 
                                     <ul class="list-inline">
@@ -38,10 +36,12 @@
                                     </ul>
 
                                     <div class="project-members mb-4" *ngFor="let g of p.groupes">
+                                      <div *ngIf="g.groupe.id==my_groupe(p).id ||authority=='professeur'">
                                         <label class="mr-3">{{g.groupe.nom}} :</label>
                                         <a *ngFor="let u of g.users" title="{{u.user1.name}}  {{u.user1.lastName}}">
                                             <img src="{{g_var.url}}api/auth/files/{{u.user1.profil}}" class="rounded-circle thumb-sm" alt="friend" />
                                         </a>
+                                      </div>  
                                     </div>
 
                                     <label class="">Tache complet: <span class="text-custom">{{p.nbr_complet}}/{{p.nbr_tache}}</span></label>
@@ -89,10 +89,10 @@
                                                 <a href="{{g_var.url}}api/auth/docs/{{d.document}}" target="_blank"><img src="assets/img/file.png" class="img-responsive img-thumbnail" alt="attached-img"></a>
                                                 <p class="font-13 mb-1 text-muted"><small>{{d.document}}</small></p>
                                                 
-                                                <a nz-popconfirm nzTitle="êtes-vous sûr de vouloir supprimer ce document ?" (nzOnConfirm)="delete_document(d.id)" nzOkText="Oui" nzCancelText="non" nzPlacement="rightBottom">Supprimer</a>
+                                                <a *ngIf="authority=='professeur'" nz-popconfirm nzTitle="êtes-vous sûr de vouloir supprimer ce document ?" (nzOnConfirm)="delete_document(d.id)" nzOkText="Oui" nzCancelText="non" nzPlacement="rightBottom">Supprimer</a>
 
                                             </div>
-                                            <div class="file-box ml-3">
+                                            <div class="file-box ml-3" *ngIf="authority=='professeur'">
                                                 <a (click)="showModalDoc()"><span class="add-new-plus"><i class="mdi mdi-plus"></i> </span></a>
                                             </div>
                                         </div>                                        
@@ -150,12 +150,20 @@
                                         </p>
                                         <br/> 
                                         <div *ngIf="p.show">
-	                                        <div *ngFor="let t of p.taches" [ngStyle]="{'background-color':is_my_task(t)==true ? '#e8e8e8' : ''}">
+	                                        <div *ngFor="let t of p.taches" [ngStyle]="{'background-color':(is_my_task(t)==true||authority=='professeur') ? '#e8e8e8' : ''}">
 	                                        	<div style="margin-left: 15px;">
-	                                        		<h6 style="padding-top: 5px;"><a (click)="show_task(t)" *ngIf="is_my_task(t)"><i class="fa fa-tasks"></i></a>&nbsp; {{t.tache.nom}}   
+	                                        		<h6 style="padding-top: 5px;"><a (click)="show_task(t)" *ngIf="is_my_task(t)||authority=='professeur'"><i class="fa fa-tasks"></i></a>&nbsp; {{t.tache.nom}}   
 
 
-	                                        		<div *ngIf="cordinateur"><a *ngIf="get_production(t)" href="{{g_var.url}}api/auth/production/{{get_production(t).document}}" target="_blank"><i class="fa fa-download pull-right" style="    padding-right: 10px;padding-top: 5px;"></i></a></div>
+	                                        		<div *ngIf="cordinateur">
+                                                      
+                                                      <a *ngIf="get_production(t)" href="{{g_var.url}}api/auth/production/{{get_production(t).document}}" target="_blank"><i class="fa fa-download pull-right" style="    padding-right: 10px;padding-top: 5px;"></i></a>
+
+                                                    </div>
+
+                                                    <div *ngIf="authority=='professeur'" class="pull-right">
+                                                        <a (click)="show_productions(t)">productions</a>
+                                                    </div>
 
 	                                        		</h6>	
 	                                        		<p class="text-muted font-12">{{t.tache.dateDebut| slice:0:10}} &nbsp; <i class="fa fa-arrow-right"></i>&nbsp;{{t.tache.dateFin| slice:0:10}} </p>
@@ -197,8 +205,7 @@
 
 				      </ng-template>
 
-				      <ng-template #modalFooter>
-				        <span>Modal Footer: </span>
+				      <ng-template #modalFooter> 
 				        <button nz-button nzType="default" (click)="handleCancel()">Annuler</button>
 				        <button nz-button nzType="primary" (click)="handleOk()">Confirmer</button>
 				      </ng-template>
@@ -236,6 +243,33 @@
                       <ng-template #modalFooter1> 
                         <button nz-button nzType="default" (click)="isVisibleDoc=false">Annuler</button>
                         <button nz-button nzType="primary" (click)="ajouter_doc()">Ajouter</button>
+                      </ng-template>
+                  
+                </nz-modal>
+
+
+
+                <nz-modal [(nzVisible)]="isVisibleProd" [nzWidth]="400" [nzTitle]="modalTitle2" [nzContent]="modalContent2"  [nzFooter]="modalFooter2" (nzOnCancel)="isVisibleProd=false">
+    
+                      <ng-template #modalTitle2>
+                      Productions du projet
+                      </ng-template>
+
+                      <ng-template #modalContent2>
+
+
+                      <div class="row" *ngFor="let p of productions">  
+                           <div class="col-lg-8">{{p.eleve.lastName}} {{p.eleve.name}}</div> 
+                           <div class="col-lg-4">
+                              <a href="{{g_var.url}}api/auth/production/{{p.document}}" target="_blank"><i class="fa fa-download pull-right" style="padding-right: 10px;"></i></a>
+                           </div> 
+                       </div>
+
+
+                      </ng-template>
+
+                      <ng-template #modalFooter2> 
+                        <button nz-button nzType="default" (click)="isVisibleProd=false">Fermer</button>  
                       </ng-template>
                   
                 </nz-modal>

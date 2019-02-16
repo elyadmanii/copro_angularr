@@ -9,6 +9,7 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
+import { NzNotificationService,NzMessageService } from 'ng-zorro-antd';
 
 @Component({
   selector: 'app-login',
@@ -24,6 +25,7 @@ export class LoginComponent implements OnInit {
   roles: string[] = [];
   private loginInfo: AuthLoginInfo;
   validateForm: FormGroup;
+  isLoading:boolean=false;
   
   submitForm(x): void {
     for (const i in this.validateForm.controls) {
@@ -33,7 +35,12 @@ export class LoginComponent implements OnInit {
     this.onSubmit(x);
     //console.log(x);
   }
-  constructor(private fb: FormBuilder,private authService: AuthService, private tokenStorage: TokenStorageService,private router: Router) { }
+  constructor(private fb: FormBuilder,
+              private authService: AuthService, 
+              private tokenStorage: TokenStorageService,
+              private router: Router,
+              private msg: NzMessageService,
+              private notification: NzNotificationService) { }
 
   ngOnInit() {
  
@@ -58,24 +65,29 @@ export class LoginComponent implements OnInit {
       x.username,
       x.password);
      console.log(this.loginInfo); 
-
+    this.isLoading=true;
     this.authService.attemptAuth(this.loginInfo).subscribe(
       data => {
         this.tokenStorage.saveToken(data.accessToken);
         this.tokenStorage.saveUsername(data.username);
         this.tokenStorage.saveAuthorities(data.authorities);
         this.tokenStorage.saveUser(data.user);
+        this.tokenStorage.isconnect=true;
+        
         console.log(data);
         this.isLoginFailed = false;
         this.isLoggedIn = true;
         this.roles = this.tokenStorage.getAuthorities();
+        this.isLoading=false;
         this.router.navigate(['home']);
-        this.reloadPage();
+        //this.reloadPage();
       },
       error => {
         console.log(error);
         this.errorMessage = error.error.message;
         this.isLoginFailed = true;
+        this.isLoading=false;
+        this.notification.create('error', 'Connexion','UserName ou mot de passe incorrect');
       }
     );
   }

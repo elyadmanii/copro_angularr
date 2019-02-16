@@ -34,7 +34,7 @@
                               </nz-form-item>
                               <nz-form-item>
                                 <nz-form-control>
-                                  <button nz-button class="login-form-button pull-right" [disabled]="!validateForm.valid" [nzType]="'primary'">Connectez-vous</button>
+                                  <button nz-button class="login-form-button pull-right" [disabled]="!validateForm.valid" [nzType]="'primary'" [nzLoading]="isLoading">Connectez-vous</button>
                                 </nz-form-control>
                               </nz-form-item>
                             </form>

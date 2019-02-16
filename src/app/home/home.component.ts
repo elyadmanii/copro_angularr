@@ -10,6 +10,8 @@ import { TokenStorageService } from '../auth/token-storage.service';
 export class HomeComponent implements OnInit {
   info: any;
 
+  array = [ 1, 2, 3, 4 ];
+
   constructor(private token: TokenStorageService) { }
 
   ngOnInit() {

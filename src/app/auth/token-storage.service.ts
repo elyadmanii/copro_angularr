@@ -10,6 +10,8 @@ const USER_KEY = 'AuthUser';
 })
 export class TokenStorageService {
   private roles: Array<string> = [];
+  public isconnect: boolean;
+  public mobile: boolean;
   constructor() { }
 
   signOut() {

@@ -15,11 +15,18 @@ export class AppComponent implements OnInit {
   constructor(private tokenStorage: TokenStorageService,private router: Router) { }
 
   ngOnInit() {
-
-    this.connect=this.tokenStorage.isAuth();
-    if(!this.connect){
-       this.router.navigate(['auth/login']);
+ 
+    if(!this.tokenStorage.getUser()){
+      this.connect=false;
+      this.router.navigate(['auth/login']);
+      this.tokenStorage.isconnect=false;
+    }else{
+      this.connect=true;  
+      this.tokenStorage.isconnect=true;
     }
+
+    this.tokenStorage.mobile=true;
+
     
     if (this.tokenStorage.getToken()) {
       this.roles = this.tokenStorage.getAuthorities();

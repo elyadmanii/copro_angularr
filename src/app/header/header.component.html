@@ -126,7 +126,7 @@
                                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-animated profile-dropdown">
                                      
                                     <!-- item-->
-                                    <a routerLink="projets" class="dropdown-item notify-item">
+                                    <a routerLink="user" class="dropdown-item notify-item">
                                         <i class="fa fa-user"></i> <span>Mon compte</span>
                                     </a>
 
@@ -136,17 +136,27 @@
                                     </a>
 
                                     <!-- item-->
-                                    <a routerLink="groupes" class="dropdown-item notify-item">
+                                    <a *ngIf="authority=='eleve'" routerLink="groupes" class="dropdown-item notify-item">
                                         <i class="fa fa-users"></i> <span>Mes groupes</span>
-                                    </a>
-                                    
-                                    <!-- item-->
-                                    <a routerLink="forums" class="dropdown-item notify-item">
-                                        <i class="fa fa-comments-o"></i> <span>Forumes</span>
                                     </a>
 
                                     <!-- item-->
-                                    <a routerLink="discussion" class="dropdown-item notify-item">
+                                    <a *ngIf="authority=='professeur'" routerLink="gestion_groupes" class="dropdown-item notify-item">
+                                        <i class="fa fa-users"></i> <span>Ges. des groupes</span>
+                                    </a>
+
+                                    <!-- item-->
+                                    <a *ngIf="authority=='professeur'" routerLink="users" class="dropdown-item notify-item">
+                                        <i class="fa fa-user-plus"></i> <span>Ges. des users</span>
+                                    </a>
+
+                                     <!-- item-->
+                                    <a routerLink="forums" class="dropdown-item notify-item">
+                                        <i class="fa fa-comments-o"></i> <span>Forums</span>
+                                    </a>
+
+                                    <!-- item-->
+                                    <a *ngIf="authority=='eleve'" routerLink="discussion" class="dropdown-item notify-item">
                                         <i class="fa fa-wechat"></i> <span>Discussion</span>
                                     </a>
 
@@ -181,7 +191,7 @@
 
                         <ul class="list-inline menu-left mb-0">
                             <li class="float-left btn-responsive">
-                                <button class="button-menu-mobile open-left">
+                                <button (click)="show_mobile()" class="button-menu-mobile open-left">
                                     <i class="dripicons-menu"></i>
                                 </button>
                             </li>

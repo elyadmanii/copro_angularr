@@ -14,45 +14,56 @@ import { DiscussionComponent } from './discussion/discussion.component';
 import { GroupeComponent } from './groupe/groupe.component';
 import { GroupeProfesseurComponent } from './groupe-professeur/groupe-professeur.component';
 import { NewProjectComponent } from './new-project/new-project.component';
+import { AuthGuard } from './auth-guard.service';
 
  
 
 const routes: Routes = [
     {
         path: 'home',
-        component: HomeComponent
+        component: HomeComponent,
+        canActivate: [AuthGuard]
     },
     { 
         path: 'user',
-        component: UserComponent
+        component: UserComponent,
+        canActivate: [AuthGuard]
     },
     {
         path: 'projets',
-        component: ProjetsComponent
+        component: ProjetsComponent,
+        canActivate: [AuthGuard]
     },
     {
         path: 'projets/new',
-        component: NewProjectComponent
+        component: NewProjectComponent,
+        canActivate: [AuthGuard]
     },
     {
         path: 'users',
-        component: UsersComponent
+        component: UsersComponent,
+        canActivate: [AuthGuard]
+        
     },
     {
         path: 'forums',
-        component: ForumsComponent
+        component: ForumsComponent,
+        canActivate: [AuthGuard]
     },
     {
         path: 'discussion',
-        component: DiscussionComponent
+        component: DiscussionComponent,
+        canActivate: [AuthGuard]
     },
     {
         path: 'groupes',
-        component: GroupeComponent
+        component: GroupeComponent,
+        canActivate: [AuthGuard]
     },
     {
         path: 'gestion_groupes',
-        component: GroupeProfesseurComponent
+        component: GroupeProfesseurComponent,
+        canActivate: [AuthGuard]
     },
     {
         path: 'pm',
@@ -68,7 +79,8 @@ const routes: Routes = [
     },
     {
         path: 'signup',
-        component: RegisterComponent
+        component: RegisterComponent,
+        canActivate: [AuthGuard]
     },
     {
         path: '',
