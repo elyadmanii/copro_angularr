@@ -157,6 +157,17 @@ export class DiscussionComponent implements OnInit {
     this.itemsRef.update(key,item);
     
   }
+
+  desc = (a, b) => {
+    if(a.key < b.key) return b.key;
+  }
   
+  /*reverseKeyOrder = (a: KeyValue<number,string>, b: KeyValue<number,string>): number => {
+    return a.key > b.key ? -1 : (b.key > a.key ? 1 : 0);
+  }
+
+  valueOrder = (a: KeyValue<number,string>, b: KeyValue<number,string>): number => {
+    return a.value.localeCompare(b.value);
+  }*/
 
 }

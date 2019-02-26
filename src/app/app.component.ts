@@ -12,10 +12,10 @@ export class AppComponent implements OnInit {
   authority: string;
   connect: boolean;
 
-  constructor(private tokenStorage: TokenStorageService,private router: Router) { }
+  constructor(public tokenStorage: TokenStorageService,private router: Router) { }
 
   ngOnInit() {
- 
+    
     if(!this.tokenStorage.getUser()){
       this.connect=false;
       this.router.navigate(['auth/login']);
@@ -24,10 +24,10 @@ export class AppComponent implements OnInit {
       this.connect=true;  
       this.tokenStorage.isconnect=true;
     }
-
-    this.tokenStorage.mobile=true;
-
     
+    if(window.innerWidth<1024){
+      this.tokenStorage.mobile=false;
+    } 
     if (this.tokenStorage.getToken()) {
       this.roles = this.tokenStorage.getAuthorities();
       this.roles.every(role => {

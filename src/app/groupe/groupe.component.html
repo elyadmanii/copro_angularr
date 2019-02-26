@@ -5,7 +5,7 @@
                                 <div class="text-center card-box">
 									<div class="member-card pt-2 pb-2">
                                         <div class="thumb-lg member-thumb m-b-10 mx-auto">
-                                            <img src="{{g_var.url}}api/auth/files/{{u.user1.profil}}" class="rounded-circle img-thumbnail" alt="profile-image">
+                                            <img src="{{g_var.url}}api/auth/files/{{u.user1.id}}" class="rounded-circle img-thumbnail" alt="profile-image">
                                         </div>
                                         <div class="">
                                             <h4 class="m-b-5">{{u.user1.name}}  {{u.user1.lastName}} <a *ngIf="u.coordinateur" title="Coordinateur"><i class="icon-user-following"></i></a></h4>
@@ -35,7 +35,7 @@
 					  <div class="col-lg-12">
 				       <div class="media m-b-20" style="margin-top: 0px;">
                         <div class="d-flex mr-3">
-                            <a> <img class="media-object rounded-circle thumb-sm" alt="64x64" src="{{g_var.url}}api/auth/files/{{user_modal.profil}}"> </a>
+                            <a> <img class="media-object rounded-circle thumb-sm" alt="64x64" src="{{g_var.url}}api/auth/files/{{user_modal.id}}"> </a>
                         </div>
                         
                         <div class="media-body"> 

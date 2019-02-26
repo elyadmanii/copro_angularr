@@ -1,4 +1,14 @@
-<app-sidebar *ngIf="tokenStorage.isconnect"  class="left side-menu side-menu-sm"></app-sidebar>
+<style type="text/css">
+	@media (max-width: 1024px){
+		.content-page {
+		    padding: 0;
+		}
+		.content-page {
+		    margin-left: 0px!important; 
+		}
+	}
+</style>
+<app-sidebar *ngIf="tokenStorage.isconnect &&tokenStorage.getMobile()"  class="left side-menu side-menu-sm"></app-sidebar>
 
 <div class="{{tokenStorage.isconnect?'content-page':''}}">
 

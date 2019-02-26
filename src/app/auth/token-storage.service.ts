@@ -11,7 +11,7 @@ const USER_KEY = 'AuthUser';
 export class TokenStorageService {
   private roles: Array<string> = [];
   public isconnect: boolean;
-  public mobile: boolean;
+  public mobile: boolean=true;
   constructor() { }
 
   signOut() {
@@ -25,6 +25,20 @@ export class TokenStorageService {
 
   public getToken(): string {
     return sessionStorage.getItem(TOKEN_KEY);
+  }
+
+  public switch_mobile(){
+    this.mobile!=this.mobile; 
+  }
+
+  public getMobile(): boolean{
+   return this.mobile;
+  }
+
+  public setMobile(x:boolean){
+    console.log("ttt",x);
+    this.mobile=x;
+    console.log("ooooo",this.mobile);
   }
 
   public isAuth(): boolean {

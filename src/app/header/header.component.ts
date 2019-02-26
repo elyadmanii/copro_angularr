@@ -12,6 +12,7 @@ import { Router } from "@angular/router";
 export class HeaderComponent implements OnInit {
   user: any;
   authority:string="";
+  mob:boolean=true;
   roles= [];
   
   constructor(private token: TokenStorageService,
@@ -24,8 +25,14 @@ export class HeaderComponent implements OnInit {
     this.token.isconnect=false;
   }
   show_mobile() {
-    this.token.mobile!=this.token.mobile;
-    console.log("mobile",this.token.mobile);
+    if(this.mob){
+      this.mob=false;
+      this.token.mobile=false;
+    }else{
+      this.mob=true;
+      this.token.mobile=true;
+    } 
+    console.log("mob",this.token.mobile);
   }
 
   

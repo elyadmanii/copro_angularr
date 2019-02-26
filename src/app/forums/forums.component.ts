@@ -10,6 +10,8 @@ import {
 import { NzNotificationService } from 'ng-zorro-antd';
 import { NzMessageService } from 'ng-zorro-antd';
 import { TokenStorageService } from '../auth/token-storage.service';
+import { Global_varService } from '../services/global_var.service';
+
 
 
 @Component({
@@ -32,7 +34,7 @@ export class ForumsComponent implements OnInit {
   itemsRef: AngularFireList<any>;
   items: Observable<any[]>;
   constructor(private fb: FormBuilder,db: AngularFireDatabase,
-              private notification: NzNotificationService,private nzMessageService: NzMessageService,private token: TokenStorageService) {
+              private notification: NzNotificationService,private nzMessageService: NzMessageService,private token: TokenStorageService,public g_var: Global_varService) {
 
     this.itemsRef = db.list('messages');
     this.items = this.itemsRef.snapshotChanges().pipe(

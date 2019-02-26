@@ -21,10 +21,53 @@ export class ProjetsComponent implements OnInit {
   list=true;
   cordinateur:boolean=false;
   isVisibleProd:boolean=false;
+  isVisibleTache_Add:boolean=false;
+  isVisibleTache_Update:boolean=false;
+  isVisiblePhase_Add:boolean=false;
+  isVisiblePhase_Update:boolean=false;
+  isVisible_s_Tache_Update:boolean=false;
+  isVisible_s_Tache_Add:boolean=false;
+
+
+
   show_tache=false;
   user: any;
   authority:string="";
   roles= [];
+ 
+  tache_update={  
+    nom:"",
+    description:"",
+    date:[], 
+  }
+
+  tache_add={  
+    nom:"",
+    description:"",
+    date:[], 
+  }
+
+  s_tache_update={  
+    nom:"",
+    description:"",
+  }
+
+  s_tache_add={  
+    nom:"",
+    description:"",
+  }
+
+  phase_update={  
+    nom:"",
+    description:"",
+    date:[], 
+  }
+
+  phase_add={  
+    nom:"",
+    description:"",
+    date:[], 
+  }
 
   constructor(private token: TokenStorageService,
   			  private init: InitAppService,
@@ -59,10 +102,59 @@ export class ProjetsComponent implements OnInit {
         //console.log(error);
       }
     );
+  }
+
+  to_update_tache(t){
+    console.log(t);
+    this.tache_update=t.tache;
+    this.tache_update.date=[];
+    this.tache_update.date.push(new Date(t.tache.dateDebut));
+    this.tache_update.date.push(new Date(t.tache.dateFin));
+    
+    this.isVisibleTache_Update=true;
   } 
+
+  to_add_tache(){   
+    this.tache_add.date.push(new Date());
+    this.tache_add.date.push(new Date());
+    this.isVisibleTache_Add=true;
+  } 
+
+  to_update_s_tache(s){
+    console.log(s);
+    this.s_tache_update=s; 
+    this.isVisible_s_Tache_Update=true;
+  } 
+
+  to_add_s_tache(){    
+    this.isVisible_s_Tache_Add=true;
+  } 
+
+  to_add_phase(){   
+    this.phase_add.date.push(new Date());
+    this.phase_add.date.push(new Date());
+    this.isVisiblePhase_Add=true;
+  }
+
+  to_update_phase(t){
+    console.log(t);
+    this.phase_update=t.phase;
+    this.phase_update.date=[];
+    this.phase_update.date.push(new Date(t.phase.dateDebut));
+    this.phase_update.date.push(new Date(t.phase.dateFin));
+    
+    this.isVisiblePhase_Update=true;
+  } 
+
+
+  onChange(result: Date[]): void {  
+    console.log('result: ', result);
+  }
+
+
   projet_statistique(projets){
-      console.log("projets",projets);
-      /*for(var i=0;i<projets.length;i++){
+      //console.log("projets",projets);
+      for(var i=0;i<projets.length;i++){
          projets[i].nbr_phase=0;
          projets[i].nbr_tache=0;
          projets[i].nbr_sous_tache=0;
@@ -75,49 +167,45 @@ export class ProjetsComponent implements OnInit {
                projets[i].nbr_complet+=projets[i].phases[j].taches[k].productionTaches.length; 
             }
          }
-
-         projets[i].percent=projets[i].nbr_tache==0?0:(projets[i].nbr_complet*100/projets[i].nbr_tache).toFixed(2);
-
-
-      }*/
-      
-
-      for(var i=0;i<projets.length;i++){
-          for(var j=0;j<projets[i].groupes.length;j++){
-            this.statistique(projets[i],projets[i].groupes[j]);
-          }
       }
+      
+       
+      for(var i=0;i<projets.length;i++){
+        for(var k=0;k<projets[i].groupes.length;k++){
+          projets[i].groupes[k].task_complet=0;
+        }
+        this.statistique(projets[i]);
+
+        for(var k=0;k<projets[i].groupes.length;k++){
+          projets[i].groupes[k].percent=projets[i].nbr_tache==0?0:(projets[i].groupes[k].task_complet*100/projets[i].nbr_tache).toFixed(2);;
+        } 
+      }
+       
       
  
   }
 
-  statistique(projet,groupe){ 
-
-     projet.nbr_phase=0;
-     projet.nbr_tache=0;
-     projet.nbr_sous_tache=0;
-     projet.nbr_complet=0;
-     projet.nbr_phase=projet.phases.length;
-
-     for(var j=0;j<projet.phases.length;j++){
-
-        projet.nbr_tache+=projet.phases[j].taches.length;
-        for(var k=0;k<projet.phases[j].taches.length;k++){
-           projet.nbr_sous_tache+=projet.phases[j].taches[k].sousTaches.length;
-           projet.nbr_complet+=projet.phases[j].taches[k].productionTaches.length; 
-           this.count_tache_complet(projet.phases[j].taches[k],groupe);
-        }
-     
-     }
-
-     projet.percent=projet.nbr_tache==0?0:(projet.nbr_complet*100/projet.nbr_tache).toFixed(2); 
+  statistique(projet){ 
+    
+    for(var j=0;j<projet.phases.length;j++){ 
+      for(var k=0;k<projet.phases[j].taches.length;k++){
+          this.count_tache_complet(projet.phases[j].taches[k],projet.groupes)
+      }
+    }
   }
 
-  count_tache_complet(tache,groupe){
-      console.log(tache);
-      console.log(groupe);
-      var count=0;
+  count_tache_complet(tache,groupes){
+    for(var k=0;k<groupes.length;k++){
+      for(var j=0;j<groupes[k].users.length;j++){
 
+        for(var i=0;i<tache.productionTaches.length;i++){ 
+          if(tache.productionTaches[i].eleve.id==groupes[k].users[j].user1.id){
+            groupes[k].task_complet++; 
+          }
+        }          
+      }
+    }
+       
   }
 
   show_detail(p): void {

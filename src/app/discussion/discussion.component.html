@@ -18,7 +18,7 @@
         <div class="inbox-widget" *ngIf="view">
             <a *ngFor="let u of users">
                 <div class="inbox-item" (click)="switch_user(u)" *ngIf="u.id!=user.id">
-                    <div class="inbox-item-img"><img src="{{g_var.url}}api/auth/files/{{u.profil}}" class="rounded-circle" alt=""></div>
+                    <div class="inbox-item-img"><img src="{{g_var.url}}api/auth/files/{{u.id}}" class="rounded-circle" alt=""></div>
                     <p class="inbox-item-author">{{u.name}}&nbsp;{{u.lastName}}</p>
                     <p class="inbox-item-text">{{u.username}}</p>
                 </div>
@@ -44,7 +44,7 @@
     <div class="col-lg-8" *ngIf="view">
         <div class="card-box task-detail" *ngIf="user_chat.id">
             <div class="media mt-0 m-b-30">
-                <img class="d-flex mr-3 rounded-circle" alt="64x64" src="{{g_var.url}}api/auth/files/{{user_chat.profil}}" style="width: 48px; height: 48px;">
+                <img class="d-flex mr-3 rounded-circle" alt="64x64" src="{{g_var.url}}api/auth/files/{{user_chat.id}}" style="width: 48px; height: 48px;">
                 <div class="media-body">
                     <h5 class="media-heading mb-0 mt-0">{{user_chat.name}}&nbsp;{{user_chat.lastName}}</h5>
                     <span class="badge badge-danger">{{user_chat.username}}</span>
@@ -54,11 +54,11 @@
 
                 <div  *ngIf="((user.id==item.user1||user.id==item.user2) && (user_chat.id==item.user1||user_chat.id==item.user2))">
                       <div class="row" style="height: 350px; overflow-y: scroll;" #scrollMe [scrollTop]="scrollMe.scrollHeight">
-                          <div *ngFor="let msg of item.msgs | keyvalue; index as i"  class="col-lg-12" style="margin-top: 2px;margin-bottom: 2px">
+                          <div *ngFor="let msg of item.msgs | keyvalue:desc"  class="col-lg-12" style="margin-top: 2px;margin-bottom: 2px">
                             <span class="badge badge-{{user.id==msg.value.id?'secondary':'success'}} pull-{{user.id==msg.value.id?'left':'right'}}" style="font-size: unset;text-align: left;">
                                {{msg.value.msg}} 
                                <br/>
-                              <small>{{msg.value.date| date:'yyyy-MM-dd HH:mm'}}</small>
+                              <small>({{msg.key}})&nbsp;{{msg.value.date| date:'yyyy-MM-dd HH:mm'}}</small>
                             </span>
                           </div> 
 
