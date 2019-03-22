@@ -122,12 +122,14 @@ export class DiscussionComponent implements OnInit {
     if(item.msgs){
       item.msgs.push({
                  id:this.user.id,
+                 name:this.user.lastName+" "+this.user.name,
                  msg:msg,
                  date:new Date().getTime()
              });
     }else{
       item.msgs=[{
                  id:this.user.id,
+                 name:this.user.lastName+" "+this.user.name,
                  msg:msg,
                  date:new Date().getTime()
              }]; 

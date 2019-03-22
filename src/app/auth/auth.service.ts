@@ -39,6 +39,18 @@ export class AuthService {
   private add_groupe_infoUrl = this.g_var.url+'api/auth/add_groupe';
   private gestion_groupesUrl = this.g_var.url+'api/auth/gestion_groupes';
   private delete_documentUrl = this.g_var.url+'api/auth/delete_document_projet';
+  private add_phaseUrl = this.g_var.url+'api/auth/add_phase';
+  private update_phaseUrl = this.g_var.url+'api/auth/update_phase';
+  private delete_phaseUrl = this.g_var.url+'api/auth/delete_phase';
+
+  private add_tacheUrl = this.g_var.url+'api/auth/add_tache';
+  private update_tacheUrl = this.g_var.url+'api/auth/update_tache';
+  private delete_tacheUrl = this.g_var.url+'api/auth/delete_tache';
+
+  private update_projetUrl = this.g_var.url+'api/auth/update_projet';
+  private delete_projetUrl = this.g_var.url+'api/auth/delete_projet';
+
+  private projet_groupesUrl = this.g_var.url+'api/auth/projet_groupes';
   
   
  
@@ -54,6 +66,43 @@ export class AuthService {
   add_project(info: any): Observable<string> {
     return this.http.post<string>(this.add_project_infoUrl, info, httpOptions);
   }
+
+  add_phase(info: any): Observable<string> {
+    return this.http.post<string>(this.add_phaseUrl, info);
+  }
+
+  update_phase(info: any): Observable<string> {
+    return this.http.post<string>(this.update_phaseUrl, info);
+  }
+
+  delete_phase(info: any): Observable<string> {
+    return this.http.post<string>(this.delete_phaseUrl, info);
+  }
+
+  update_projet(info: any): Observable<string> {
+    return this.http.post<string>(this.update_projetUrl, info);
+  }
+
+  delete_projet(info: any): Observable<string> {
+    return this.http.post<string>(this.delete_projetUrl, info);
+  }
+
+  projet_groupes(info: any): Observable<string> {
+    return this.http.post<string>(this.projet_groupesUrl, info);
+  }
+  
+  add_tache(info: any): Observable<string> {
+    return this.http.post<string>(this.add_tacheUrl, info);
+  }
+
+  update_tache(info: any): Observable<string> {
+    return this.http.post<string>(this.update_tacheUrl, info);
+  }
+
+  delete_tache(info: any): Observable<string> {
+    return this.http.post<string>(this.delete_tacheUrl, info);
+  }
+  
 
   add_groupe(info: any): Observable<string> {
     return this.http.post<string>(this.add_groupe_infoUrl, info, httpOptions);

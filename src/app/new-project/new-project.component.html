@@ -206,7 +206,7 @@
 	      <button nz-button nzType="default" [disabled]="!date || !description || !nom || (groupes_selected.length==0)" (click)="next()" *ngIf="current < 1">
 	        <span>Suivant</span>
 	      </button>
-	      <button nz-button nzType="primary" (click)="add_project()" *ngIf="current === 1">
+	      <button nz-button nzType="primary" [nzLoading]="isLoading" (click)="add_project()" *ngIf="current === 1">
 	        <span>Confirmer</span>
 	      </button>
 	    </div>

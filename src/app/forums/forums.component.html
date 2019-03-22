@@ -187,9 +187,9 @@
                <nz-form-item>
                 <nz-form-control>
                   <nz-input-group [nzPrefix]="prefixUser">
-                    <textarea formControlName="forum" rows="5" nz-input placeholder="text"></textarea>
+                    <textarea formControlName="forum" rows="5" nz-input placeholder=""></textarea>
                   </nz-input-group>
-                  <nz-form-explain *ngIf="validateForm.get('forum').dirty && validateForm.get('forum').errors">Please input your username!</nz-form-explain>
+                  <nz-form-explain *ngIf="validateForm.get('forum').dirty && validateForm.get('forum').errors">Champs requis</nz-form-explain>
                </nz-form-control>
               </nz-form-item>
               <nz-form-item>

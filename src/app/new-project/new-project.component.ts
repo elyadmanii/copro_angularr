@@ -5,6 +5,7 @@ import { NzMessageService, UploadFile } from 'ng-zorro-antd';
 import { Observable, Observer } from 'rxjs';
 import { TokenStorageService } from '../auth/token-storage.service';
 import { NzNotificationService } from 'ng-zorro-antd';
+import {Router} from "@angular/router"
 
 
 @Component({
@@ -18,6 +19,7 @@ export class NewProjectComponent implements OnInit {
   nom: any;
   description: any;
   date= {};
+  isLoading:boolean=false;
   
   groupes = [];
   groupes_selected = [];
@@ -49,7 +51,8 @@ export class NewProjectComponent implements OnInit {
       			  private init: InitAppService,
       			  private authService: AuthService,
       			  private msg: NzMessageService,
-              private notification: NzNotificationService) { }
+              private notification: NzNotificationService,
+              private router: Router) { }
 
   ngOnInit() { 
   	this.user=this.token.getUser();
@@ -65,7 +68,7 @@ export class NewProjectComponent implements OnInit {
   }
 
   add_project() {
-   
+      this.isLoading=true; 
       var phs=[];
       for(var i=0;i<this.phases.length;i++){
          var ths=[];
@@ -99,11 +102,13 @@ export class NewProjectComponent implements OnInit {
  
       this.authService.add_project(dd).subscribe(
         data => { 
-
+           this.isLoading=false;
+           this.router.navigate(['projets']); 
            this.notification.create('success', 'Projet',
              'ajouté avec succès');  
         },
         error => { 
+          this.isLoading=false; 
           this.notification.create('error', 'Projet',
              'Erreur de serveur');  
         }

@@ -6,6 +6,7 @@ import { Observable, Observer } from 'rxjs';
 import { TokenStorageService } from '../auth/token-storage.service';
 import { NzNotificationService } from 'ng-zorro-antd';
 import { Global_varService } from '../services/global_var.service';
+import {Router} from "@angular/router"
 
 
 @Component({
@@ -20,6 +21,7 @@ export class ProjetsComponent implements OnInit {
   tache= <any>{}; 
   list=true;
   cordinateur:boolean=false;
+  projet_groupe:number=0;
   isVisibleProd:boolean=false;
   isVisibleTache_Add:boolean=false;
   isVisibleTache_Update:boolean=false;
@@ -27,6 +29,18 @@ export class ProjetsComponent implements OnInit {
   isVisiblePhase_Update:boolean=false;
   isVisible_s_Tache_Update:boolean=false;
   isVisible_s_Tache_Add:boolean=false;
+  isVisibleProjet_Update:boolean = false;
+  isVisibleGroupe_Update:boolean = false;
+  isVisibleAffectations:boolean = false;
+  groupes = [];
+  groupes_selected = [];
+  eleves_taches = [];
+
+  grps=[];
+  grp={};
+
+  eleves=[];
+  eleve={};
 
 
 
@@ -34,11 +48,13 @@ export class ProjetsComponent implements OnInit {
   user: any;
   authority:string="";
   roles= [];
- 
+  projet_update={};
+
   tache_update={  
     nom:"",
     description:"",
-    date:[], 
+    date:[],
+
   }
 
   tache_add={  
@@ -57,7 +73,8 @@ export class ProjetsComponent implements OnInit {
     description:"",
   }
 
-  phase_update={  
+  phase_update={
+    id:0,  
     nom:"",
     description:"",
     date:[], 
@@ -73,10 +90,11 @@ export class ProjetsComponent implements OnInit {
   			  private init: InitAppService,
   			  private authService: AuthService,
   			  private msg: NzMessageService,
-              private notification: NzNotificationService,
-              public g_var: Global_varService) { }
+          private notification: NzNotificationService,
+          public g_var: Global_varService,
+          private router: Router) { }
 
-
+  
   ngOnInit() { 
   	this.user=this.token.getUser();
     this.roles = this.token.getAuthorities();
@@ -92,20 +110,39 @@ export class ProjetsComponent implements OnInit {
         return true;
     });
 
+    if (this.authority == 'professeur') {
+        this.authService.groupes_prof().subscribe(
+          response => {
+            this.groupes=response;
+          },
+          error => {
+            console.log(error);
+          }
+        );
+    }
+
+    this.load_project();
+  }
+  
+
+  load_project(){
     this.authService.inits().subscribe(
       response => {
          this.projet=response.projets2;
-         //console.log("projets",this.projet);
+         console.log("projets",this.projet);
          this.projet_statistique(this.projet);
        },
       error => {
-        //console.log(error);
-      }
+       }
     );
   }
 
+  to_new(){
+    this.router.navigate(['projets/new']);
+  }
+
   to_update_tache(t){
-    console.log(t);
+   // console.log(t);
     this.tache_update=t.tache;
     this.tache_update.date=[];
     this.tache_update.date.push(new Date(t.tache.dateDebut));
@@ -114,19 +151,21 @@ export class ProjetsComponent implements OnInit {
     this.isVisibleTache_Update=true;
   } 
 
-  to_add_tache(){   
+  to_add_tache(p){   
+    this.tache_add.phase=p.phase;
     this.tache_add.date.push(new Date());
     this.tache_add.date.push(new Date());
     this.isVisibleTache_Add=true;
   } 
 
   to_update_s_tache(s){
-    console.log(s);
+   // console.log(s);
     this.s_tache_update=s; 
     this.isVisible_s_Tache_Update=true;
   } 
 
-  to_add_s_tache(){    
+  to_add_s_tache(tache){
+    s_tache_add.tache=tache;    
     this.isVisible_s_Tache_Add=true;
   } 
 
@@ -137,7 +176,7 @@ export class ProjetsComponent implements OnInit {
   }
 
   to_update_phase(t){
-    console.log(t);
+   // console.log(t);
     this.phase_update=t.phase;
     this.phase_update.date=[];
     this.phase_update.date.push(new Date(t.phase.dateDebut));
@@ -148,7 +187,7 @@ export class ProjetsComponent implements OnInit {
 
 
   onChange(result: Date[]): void {  
-    console.log('result: ', result);
+    //console.log('result: ', result);
   }
 
 
@@ -209,7 +248,7 @@ export class ProjetsComponent implements OnInit {
   }
 
   show_detail(p): void {
-    //console.log(p);
+    console.log(p);
     this.list=false; 
     this.detail=p;
     this.show_tache=false;
@@ -223,6 +262,53 @@ export class ProjetsComponent implements OnInit {
     this.show_tache=!this.show_tache;
     this.tache=t; 
   }  
+
+
+  show_affectation(t): void {
+    this.grps=[];
+    this.grp={};
+    this.eleves=[];
+    this.eleve={};
+    this.eleves_taches = [];
+
+    for(var i=0;i<t.tacheEleves.length;i++){
+      for(var j=0;j<this.detail.groupes.length;j++){
+        for(var k=0;k<this.detail.groupes[j].users.length;k++){
+          if(t.tacheEleves[i].eleve_tache.id==this.detail.groupes[j].users[k].user1.id){
+              this.eleves_taches.push({
+                  groupe:this.detail.groupes[j].groupe,
+                  user:this.detail.groupes[j].users[k].user1
+              });
+          }
+        }  
+      }
+    }
+
+    console.log("eleves_taches",this.eleves_taches);
+
+    this.grps=this.detail.groupes;
+    console.log(this.detail.groupes); 
+    console.log(t);
+    this.isVisibleAffectations=true; 
+  }  
+
+  change_grps(value: string): void {
+    //console.log("change")
+    this.eleves=this.grp.users;
+    this.eleve={};
+  }
+
+  change_eleves(value: string): void {
+    console.log("grp",this.grp);
+    console.log("eleve",this.eleve);
+    /*for(var k=0;k<this.detail.groupes[j].users.length;k++){
+          if(t.tacheEleves[i].eleve_tache.id==this.detail.groupes[j].users[k].user1.id){
+              
+          }
+    } */
+  }
+
+  
 
   isVisible = false;
   isVisibleDoc = false;
@@ -301,6 +387,7 @@ export class ProjetsComponent implements OnInit {
 
   delete_production(production){ 
     //console.log(production);
+    //console.log(this.tache.productionTaches);
     this.formData=new FormData();
     this.formData.append('id', production.id);
     this.authService.production_delete(this.formData).subscribe(
@@ -308,7 +395,10 @@ export class ProjetsComponent implements OnInit {
             this.notification.create('success', 'Production',
                'supprimée avec succès');
             for(var i=0;i<this.tache.productionTaches.length;i++){
-            	this.tache.productionTaches.splice(i,1);
+              if(this.tache.productionTaches[i].id==production.id){
+                this.tache.productionTaches.splice(i,1);
+              }
+            	
             }     
             this.projet_statistique(this.projet);
           },
@@ -353,7 +443,7 @@ export class ProjetsComponent implements OnInit {
   }
 
   get_my_production(tache){ 
-    //console.log("tache",tache);
+    
     for(var i=0;i<tache.productionTaches.length;i++){
       if(tache.productionTaches[i].eleve.id==this.user.id && tache.productionTaches[i].tache1.id==tache.tache.id){
         //console.log("productionTaches",tache.productionTaches[i]);
@@ -364,8 +454,9 @@ export class ProjetsComponent implements OnInit {
   }
   
   get_production(tache){  
+    //console.log("tache",tache);
     for(var i=0;i<tache.productionTaches.length;i++){
-      if(tache.productionTaches[i].tache1.id==tache.tache.id){ 
+      if(tache.productionTaches[i].tache1.id==tache.tache.id && this.groupe_eleve(this.detail,this.user).id==this.groupe_eleve(this.detail,tache.productionTaches[i].eleve).id){ 
         return tache.productionTaches[i];
       }
     } 
@@ -394,14 +485,313 @@ export class ProjetsComponent implements OnInit {
      }
      return {id:0};
   } 
+
+  groupe_eleve(projet,user){
+     for(var i=0;i<projet.groupes.length;i++){
+        for(var j=0;j<projet.groupes[i].users.length;j++){
+          if(projet.groupes[i].users[j].user1.id==user.id){
+            return projet.groupes[i].groupe;
+          }
+       }  
+     }
+     return {id:0};
+  } 
   
   productions=[];
   show_productions(tache){
-     console.log(tache);
+    // console.log(tache);
      this.isVisibleProd=true; 
      this.productions=tache.productionTaches;
   } 
+//ajouter phase
+ 
+ajouter_phase(){ 
+    this.isVisiblePhase_Add = false; 
+    var phase= {'projet':this.detail.projet.id,
+                'nom':this.phase_add.nom,
+                'description':this.phase_add.description,
+                'dd':this.phase_add.date[0],
+                'df':this.phase_add.date[1] };
+    this.authService.add_phase(phase).subscribe(
+          data => { 
+            console.log("data",data);
+            this.notification.create('success', 'Phase',
+               'ajouté avec succès');
+            this.detail.phases.push(data);     
+            this.projet_statistique(this.projet);
 
+          },
+          error => { 
+            this.notification.create('error', 'Phase',
+               'Erreur de serveur');  
+          }
+        );
+}
+
+update_phase(){ 
+    this.isVisiblePhase_Update = false; 
+    console.log(this.phase_update);
+    var phase= {'projet':this.phase_update.id,
+                'nom':this.phase_update.nom,
+                'description':this.phase_update.description,
+                'dd':this.phase_update.date[0],
+                'df':this.phase_update.date[1] };
+    this.authService.update_phase(phase).subscribe(
+          data => { 
+            console.log("data",data);
+            this.notification.create('success', 'Phase',
+               'modifié avec succès');
+            for(var i=0;i<this.detail.phases.length;i++){
+              if(this.detail.phases[i].phase.id==data.phase.id)
+               this.detail.phases[i]=data;
+            }     
+            this.projet_statistique(this.projet);   
+          },
+          error => { 
+            this.notification.create('error', 'Phase',
+               'Erreur de serveur');  
+          }
+        ); 
+}
+
+delete_phase(p){  
+    console.log(p);
+    this.formData=new FormData();
+    this.formData.append('id', p.phase.id);
+    this.authService.delete_phase(this.formData).subscribe(
+          data => { 
+            console.log("data",data);
+            this.notification.create('success', 'Phase',
+               'supprimé avec succès');
+            for(var i=0;i<this.detail.phases.length;i++){
+              if(this.detail.phases[i].phase.id==p.phase.id)
+               this.detail.phases.splice(i,1);
+            }     
+            this.projet_statistique(this.projet);   
+          },
+          error => { 
+            this.notification.create('error', 'Phase',
+               'Erreur de serveur');  
+          }
+        ); 
+}
+
+add_tache(p){ 
+    this.isVisibleTache_Add = false; 
+    console.log(p);
+    var tache= {'phase':p.phase.id,
+                'nom':this.tache_add.nom,
+                'description':this.tache_add.description,
+                'dd':this.tache_add.date[0],
+                'df':this.tache_add.date[1] };
+    this.authService.add_tache(tache).subscribe(
+          data => { 
+             console.log("tache",data);
+            //console.log("detail",this.detail);
+            data.productionTaches=[];
+            data.sousTaches=[];
+            data.tacheEleves=[];
+            this.notification.create('success', 'Tache',
+               'ajouté avec succès');
+             
+            for(var i=0;i<this.detail.phases.length;i++){ 
+                if(this.detail.phases[i].phase.id==data.tache.phase.id){
+                     console.log("result",this.detail.phases[i]);
+                     this.detail.phases[i].taches.push(data);
+                } 
+            } 
+
+            this.projet_statistique(this.projet);
+
+          },
+          error => { 
+            this.notification.create('error', 'Tache',
+               'Erreur de serveur');  
+          }
+        );
+}
+
+update_tache(p){ 
+    this.isVisibleTache_Update = false; 
+    console.log(p);
+    var tache= {'phase':this.tache_update.id,
+                'nom':this.tache_update.nom,
+                'description':this.tache_update.description,
+                'dd':this.tache_update.date[0],
+                'df':this.tache_update.date[1] };
+    this.authService.update_tache(tache).subscribe(
+          data => { 
+            console.log("data",data);
+            this.notification.create('success', 'Tache',
+               'modifié avec succès');
+            for(var i=0;i<this.detail.phases.length;i++){
+                for(var j=0;j<this.detail.phases[i].taches.length;j++){
+                  if(this.detail.phases[i].taches[j].tache.id==data.tache.id)
+                  this.detail.phases[i].taches[j]=data;  
+                }
+              
+            }     
+            this.projet_statistique(this.projet);   
+          },
+          error => { 
+            this.notification.create('error', 'Tache',
+               'Erreur de serveur');  
+          }
+        ); 
+}
+
+delete_tache(p){  
+    
+    this.formData=new FormData();
+    this.formData.append('id', p.tache.id);
+    this.authService.delete_tache(this.formData).subscribe(
+          data => { 
+            this.notification.create('success', 'Tache',
+               'supprimé avec succès');
+            for(var i=0;i<this.detail.phases.length;i++){
+              for(var j=0;j<this.detail.phases[i].taches.length;j++){
+                console.log(this.detail.phases[i].taches[j]);
+                console.log(p);
+                if(this.detail.phases[i].taches[j].tache.id==p.tache.id)
+                  this.detail.phases[i].taches.splice(i,1);break;
+              }
+            }     
+            this.projet_statistique(this.projet);
+          },
+          error => { 
+            this.notification.create('error', 'Tache',
+               'Erreur de serveur');  
+          }
+        );  
+}
+
+to_update_projet(p){
+  this.isVisibleProjet_Update = true; 
+  
+  p.nom=p.projet.nom;
+  p.description=p.projet.description;
+  p.date=[];
+  p.date.push(new Date(p.projet.dateDebut));
+  p.date.push(new Date(p.projet.dateFin));
+
+  this.projet_update = p;
+  console.log(p);
+}
+update_projet(){ 
+    this.isVisibleProjet_Update = false; 
+    console.log(this.projet_update);
+    var projet= {'projet':this.projet_update.projet.id,
+                'nom':this.projet_update.nom,
+                'description':this.projet_update.description,
+                'dd':this.projet_update.date[0],
+                'df':this.projet_update.date[1] };
+    this.authService.update_projet(projet).subscribe(
+          data => { 
+            console.log("data",data);
+            this.notification.create('success', 'Projet',
+               'modifié avec succès');
+            this.load_project();
+          },
+
+          error => { 
+            this.notification.create('error', 'Projet',
+               'Erreur de serveur');  
+          }
+        ); 
+}
+
+delete_projet(p){  
+
+    
+    this.formData=new FormData();
+    this.formData.append('id', p.projet.id);
+    this.authService.delete_projet(this.formData).subscribe(
+          data => { 
+            this.notification.create('success', 'Projet',
+               'supprimé avec succès');
+            for(var i=0;i<this.projet.length;i++){
+                console.log(this.projet[i].projet);
+                console.log(p.projet); 
+                if(this.projet[i].projet.id==p.projet.id){
+                  this.projet.splice(i,1);break;
+                }
+            }     
+            this.projet_statistique(this.projet);
+          },
+          error => { 
+            this.notification.create('error', 'Projet',
+               'Erreur de serveur');  
+          }
+        );  
+}
+
+
+show_groupes(p){
+  this.isVisibleGroupe_Update=true; 
+  this.groupes_selected = [];
+  this.groupes_selected = [];
+  this.projet_groupe=p;
+  for(var i=0;i<p.groupes.length;i++){ 
+    for(var j=0;j<this.groupes.length;j++){
+        if(p.groupes[i].groupe.id==this.groupes[j].id){
+           this.groupes_selected.push(this.groupes[j].id);
+        }
+    }
+  } 
+ 
+}
+
+update_groupes(){
+    var new_groupes=[];
+    var old_groupes=[];
+    this.isVisibleGroupe_Update=false; 
+
+    var etat=true;
+    for(var i=0;i<this.projet_groupe.groupes.length;i++){ 
+      etat=true;
+      for(var j=0;j<this.groupes_selected.length;j++){
+          if(this.projet_groupe.groupes[i].groupe.id==this.groupes_selected[j]){
+             etat=false;break;
+          } 
+      }
+      if(etat){
+        old_groupes.push(this.projet_groupe.groupes[i].groupe.id);
+      }
+    }
+
+    for(var j=0;j<this.groupes_selected.length;j++){ 
+      etat=true;
+      for(var i=0;i<this.projet_groupe.groupes.length;i++){
+          if(this.projet_groupe.groupes[i].groupe.id==this.groupes_selected[j]){
+             etat=false;break;
+          } 
+      }
+      if(etat){
+        new_groupes.push(this.groupes_selected[j]);
+      }
+    } 
+ 
+
+    console.log(old_groupes);
+    console.log(new_groupes);
+
+    this.formData=new FormData();
+    this.formData.append('projet', this.projet_groupe.projet.id);
+    this.formData.append('groupes_deleted', old_groupes);
+    this.formData.append('groupes_added', new_groupes);
+
+    this.authService.projet_groupes(this.formData).subscribe(
+      data => { 
+        this.notification.create('success', 'Groupes',
+           'modifié avec succès');
+        this.load_project();   
+      },
+      error => { 
+        this.notification.create('error', 'Groupes',
+           'Erreur de serveur');  
+      }
+    ); 
+}
   
 
 }

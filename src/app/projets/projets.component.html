@@ -1,7 +1,15 @@
 <div class="row">
     <div class="col-lg-12">
         <div class="search-result-box card-box">
-           <h4 class="header-title" (click)="list=true" style="cursor: pointer;">Mes projets</h4>     
+           <h4 class="header-title" style="cursor: pointer;">
+            <span (click)="list=true">Mes projets</span>
+            <span  (click)="to_new()" class="pull-right">
+                   <button  *ngIf="authority=='professeur'" nz-button nzType="primary">
+                          <span>Nouveau</span>
+                    </button>
+            </span>                            
+
+           </h4>     
         </div>
     </div>
 </div>
@@ -22,9 +30,11 @@
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="btnGroupDrop1" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(24px, 31px, 0px);">
                                             <a class="dropdown-item" (click)="show_detail(p)">Détails</a>
-                                            <a class="dropdown-item">Modifier</a>
-                                            <a class="dropdown-item">Supprimer</a> 
-                                            <a class="dropdown-item">Groupes</a> 
+                                            <a class="dropdown-item" (click)="to_update_projet(p)">Modifier</a> 
+
+                                            <a class="dropdown-item" nz-popconfirm nzTitle="êtes-vous sûr de vouloir supprimer cet phase ?" (nzOnConfirm)="delete_projet(p)" nzOkText="Oui" nzCancelText="non" nzPlacement="rightBottom">Supprimer</a>
+
+                                            <a class="dropdown-item" (click)="show_groupes(p)">Groupes</a> 
                                         </div>
                                     </div>
 
@@ -163,7 +173,7 @@
 
                                     <div>
 										<h5 class="">Les sous taches ({{tache.sousTaches.length}}) 
-                          <span style="cursor: pointer;" (click)="to_add_s_tache()" class="pull-right">
+                          <span style="cursor: pointer;" (click)="to_add_s_tache(tache)" class="pull-right">
                             <i class="fa fa-plus"></i>&nbsp; nouvelle sous tache  
                            </span> 
                     </h5>
@@ -205,8 +215,12 @@
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="btnGroupDrop1" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(24px, 31px, 0px);">
                                             <a class="dropdown-item" (click)="to_update_phase(p)">Modifier</a>
-                                            <a class="dropdown-item">Supprimer</a> 
-                                            <a class="dropdown-item" (click)="to_add_tache()">Nouvelle tache</a> 
+                                            
+                                            <a class="dropdown-item" nz-popconfirm nzTitle="êtes-vous sûr de vouloir supprimer cet phase ?" (nzOnConfirm)="delete_phase(p)" nzOkText="Oui" nzCancelText="non" nzPlacement="rightBottom">Supprimer</a>
+
+                                            <a class="dropdown-item" (click)="to_add_tache(p)">Nouvelle tache</a> 
+
+
                                         </div>
                                        </div>
 
@@ -241,10 +255,12 @@
                                                           <h3 class="m-0 text-muted"><i class="mdi mdi-dots-horizontal"></i></h3>
                                                       </a>
                                                       <div class="dropdown-menu dropdown-menu-right" aria-labelledby="btnGroupDrop1" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(24px, 31px, 0px);">
-                                                          <a class="dropdown-item" (click)="to_update_tache(t)">Modifier</a>
-                                                          <a class="dropdown-item">Supprimer</a> 
+                                                          <a class="dropdown-item" (click)="to_update_tache(t)">Modifier</a> 
+
+                                                          <a class="dropdown-item" nz-popconfirm nzTitle="êtes-vous sûr de vouloir supprimer cet tache ?" (nzOnConfirm)="delete_tache(t)" nzOkText="Oui" nzCancelText="non" nzPlacement="rightBottom">Supprimer</a>
+
                                                           <a class="dropdown-item" (click)="show_productions(t)">Productions</a> 
-                                                          <a class="dropdown-item">Affectations</a> 
+                                                          <a class="dropdown-item" (click)="show_affectation(t)">Affectations</a> 
                                                       </div>
                                                      </div>
  
@@ -394,7 +410,7 @@
 
                       <ng-template #footer_tache_add> 
                         <button nz-button nzType="default" (click)="isVisibleTache_Add=false">Annuler</button>
-                        <button nz-button nzType="primary"  [disabled]="!tache_add.description || !tache_add.nom" (click)="ajouter_tache()">Ajouter</button>
+                        <button nz-button nzType="primary"  [disabled]="!tache_add.description || !tache_add.nom" (click)="add_tache(tache_add)">Ajouter</button>
                       </ng-template>
                   
                 </nz-modal>
@@ -435,14 +451,14 @@
 
                       <ng-template #footer_tache_update> 
                         <button nz-button nzType="default" (click)="isVisibleTache_Update=false">Annuler</button>
-                        <button nz-button nzType="primary"  [disabled]="!tache_update.description || !tache_update.nom" (click)="modifier_tache()">Modifier</button>
+                        <button nz-button nzType="primary"  [disabled]="!tache_update.description || !tache_update.nom" (click)="update_tache(tache_update)">Modifier</button>
                       </ng-template>
                   
                 </nz-modal>
 
 
 
-<nz-modal [(nzVisible)]="isVisiblePhase_Add" [nzWidth]="600" [nzTitle]="title_phase_add" [nzContent]="content_phase_add"  [nzFooter]="footer_tache_add" (nzOnCancel)="isVisiblePhase_Add=false">
+<nz-modal [(nzVisible)]="isVisiblePhase_Add" [nzWidth]="600" [nzTitle]="title_phase_add" [nzContent]="content_phase_add"  [nzFooter]="footer_phase_add" (nzOnCancel)="isVisiblePhase_Add=false">
     
                       <ng-template #title_phase_add>
                         Nouvelle phase
@@ -517,7 +533,7 @@
 
                       <ng-template #footer_phase_update> 
                         <button nz-button nzType="default" (click)="isVisiblePhase_Update=false">Annuler</button>
-                        <button nz-button nzType="primary"  [disabled]="!phase_update.description || !phase_update.nom" (click)="modifier_phase()">Modifier</button>
+                        <button nz-button nzType="primary"  [disabled]="!phase_update.description || !phase_update.nom" (click)="update_phase()">Modifier</button>
                       </ng-template>
                   
                 </nz-modal>
@@ -587,3 +603,146 @@
                   
                 </nz-modal>
 
+
+                <nz-modal [(nzVisible)]="isVisibleProjet_Update" [nzWidth]="600" [nzTitle]="title_projet_update" [nzContent]="content_projet_update"  [nzFooter]="footer_projet_update" (nzOnCancel)="isVisibleProjet_Update=false">
+    
+                      <ng-template #title_projet_update>
+                        Modifier projet
+                      </ng-template>
+
+                      <ng-template #content_projet_update>
+                        <div class="row">
+                            <label class="col-12 col-form-label">Nom</label>
+                            <div class="col-12">
+                                <input type="text" placeholder="Nom de projet" class="form-control" [(ngModel)]="projet_update.nom" />
+                            </div>
+                        </div>
+
+                        <div class="row">
+                                <label class="col-12 col-form-label">Description</label>
+                                <div class="col-12">
+                                    <textarea class="form-control" placeholder="Description" [(ngModel)]="projet_update.description" rows="5"></textarea>
+                                </div>
+                        </div>
+
+                        <div class="row">
+                                <label class="col-12 col-form-label">Durée de la phase</label>
+                                <div class="col-12">
+                                        <nz-range-picker 
+                                          [(ngModel)]="projet_update.date"
+                                          (ngModelChange)="onChange($event)"
+                                        ></nz-range-picker>
+                                </div>
+                        </div>
+                      </ng-template>
+
+                      <ng-template #footer_projet_update> 
+                        <button nz-button nzType="default" (click)="isVisibleProjet_Update=false">Annuler</button>
+                        <button nz-button nzType="primary"  [disabled]="!projet_update.description || !projet_update.nom ||projet_update.date.length==0" (click)="update_projet()">Modifier</button>
+                      </ng-template>
+                  
+                </nz-modal>
+
+
+
+            <nz-modal [(nzVisible)]="isVisibleGroupe_Update" [nzWidth]="600" [nzTitle]="title_groupe_update" [nzContent]="content_groupe_update"  [nzFooter]="footer_groupe_update" (nzOnCancel)="isVisibleGroupe_Update=false">
+    
+                      <ng-template #title_groupe_update>
+                        Gestion des groupes  
+                      </ng-template>
+
+                      <ng-template #content_groupe_update>
+  
+                        <div class="row">
+                            <label class="col-12 col-form-label">Groupes *</label>
+                            <div class="col-12">
+                                <nz-select [nzMaxMultipleCount]="10" style="width: 100%" nzMode="multiple" nzPlaceHolder="Please select" [(ngModel)]="groupes_selected">
+                                  <nz-option *ngFor="let g of groupes" [nzLabel]="g.nom" [nzValue]="g.id"></nz-option>
+                                </nz-select>
+                            </div>
+                        </div>
+ 
+                      </ng-template>
+
+                      <ng-template #footer_groupe_update> 
+                        <button nz-button nzType="default" (click)="isVisibleGroupe_Update=false">Annuler</button>
+                        <button nz-button nzType="primary"  [disabled]="groupes_selected.length==0" (click)="update_groupes()">Modifier</button>
+                      </ng-template>
+                  
+                </nz-modal>
+
+
+
+                <nz-modal [(nzVisible)]="isVisibleAffectations" [nzWidth]="600" [nzTitle]="title_affectations" [nzContent]="content_affectations"  [nzFooter]="footer_affectations" (nzOnCancel)="isVisibleAffectations=false">
+    
+                      <ng-template #title_affectations>
+                        Gestion des groupes  
+                      </ng-template>
+
+                      <ng-template #content_affectations>
+  
+                        <!--<div class="row">
+                            <label class="col-12 col-form-label">Groupes *</label>
+                            <div class="col-12">
+                                <nz-select [nzMaxMultipleCount]="10" style="width: 100%" nzMode="multiple" nzPlaceHolder="Please select" [(ngModel)]="groupes_selected">
+                                  <nz-option *ngFor="let g of groupes" [nzLabel]="g.nom" [nzValue]="g.id"></nz-option>
+                                </nz-select>
+                            </div>
+                        </div>-->
+
+                        <div class="row">
+                            <label class="col-12 col-form-label">Groupes *</label>
+                            <div class="col-12">
+                                <nz-select style="width: 100%" [(ngModel)]="grp" (ngModelChange)="change_grps($event)" [nzSize]="size">
+                                  <nz-option *ngFor="let option of grps" [nzLabel]="option.groupe.nom" [nzValue]="option"></nz-option>
+                                </nz-select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <label class="col-12 col-form-label">Eleves *</label>
+                            <div class="col-12">
+                                <nz-select style="width: 100%" [(ngModel)]="eleve" (ngModelChange)="change_eleves($event)" [nzSize]="size">
+                                  <nz-option *ngFor="let option of eleves" [nzLabel]="option.user1.name" [nzValue]="option"></nz-option>
+                                </nz-select>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <label class="col-12 col-form-label">Liste des eleves  *</label>
+                            <div class="col-12">
+                                <table class="table table-condensed">
+                                    <thead>
+                                      <tr>
+                                        <th>Groupe</th>
+                                        <th>Eleve</th>
+                                        <th>Actions</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+
+                                      <tr *ngFor="let e of eleves_taches">
+                                        <td>{{e.groupe.nom}}</td>
+                                        <td>{{e.user.lastName}} &nbsp; {{e.user.name}}</td>
+                                        <td>
+                                            <i style="cursor: pointer;" class="fa fa-trash"></i> &nbsp;
+                                            <i style="cursor: pointer;" class="fa fa-pencil"></i> 
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+
+                        
+ 
+                      </ng-template>
+
+                      <ng-template #footer_affectations> 
+                        <button nz-button nzType="default" (click)="isVisibleAffectations=false">Annuler</button>
+                        <button nz-button nzType="primary"  [disabled]="groupes_selected.length==0" (click)="update_groupes()">Modifier</button>
+                      </ng-template>
+                  
+                </nz-modal>
