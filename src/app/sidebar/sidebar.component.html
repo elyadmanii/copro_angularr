@@ -28,7 +28,7 @@
                     <i class="fa fa-suitcase"></i> <span> Projets </span>
                 </a>
             </li>
-            <li *ngIf="authority=='professeur'">
+            <li *ngIf="authority=='admin'||authority=='professeur'">
                 <a routerLink="users">
                     <i class="fa fa-user-plus"></i> <span> Gestion des Utilisateur </span>
                 </a>

@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-lg-12">
         <div class="search-result-box card-box">
-           <h4 class="header-title">Liste de mes élèves ({{data.length}})  <span class="pull-right">
+           <h4 class="header-title">Liste des {{(authority=='admin')?'professeurs':'élèves'}} ({{data.length}})  <span class="pull-right">
                <button nz-button nzType="primary" (click)="showModal()">
                       <span>Nouveau</span>
                 </button>
@@ -15,6 +15,7 @@
 		          <th nzShowSort nzSortKey="lastName">Prénom</th>
 		          <th nzShowSort nzSortKey="username">UserName</th>
 		          <th nzShowSort nzSortKey="email">Email</th>
+              <th>Actions</th>
 		        </tr>
 		      </thead>
 		      <tbody>
@@ -23,6 +24,12 @@
 		          <td>{{data.lastName}}</td>
 		          <td>{{data.username}}</td>
 		          <td>{{data.email}}</td>
+              <td>
+                <button nz-popconfirm nzTitle="êtes-vous sûr de vouloir supprimer ce user ?" (nzOnConfirm)="delete_user(data)" nzOkText="Oui" nzCancelText="non" nzPlacement="leftBottom" nz-button ><i class="fa fa-trash"></i></button>
+
+                <button nz-button (click)="to_update(data)"><i class="fa fa-pencil"></i></button>
+
+              </td>
 		        </tr>
 		      </tbody>
 		    </nz-table>
@@ -40,7 +47,7 @@
 <nz-modal [(nzVisible)]="isVisible" [nzWidth]="800" [nzTitle]="modalTitle" [nzContent]="modalContent" [nzFooter]="null" (nzOnCancel)="handleCancel()">
     
       <ng-template #modalTitle>
-        Ajouter un nouvel élève
+        Ajouter un  {{(authority=='admin')?'nouveau professeur':'nouvel élève'}}
       </ng-template>
 
       <ng-template #modalContent>

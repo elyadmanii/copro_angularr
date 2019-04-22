@@ -1,4 +1,5 @@
 export class SignUpInfo {
+    id: number;
     name: string;
     lastName: string;
     username: string;
@@ -6,7 +7,8 @@ export class SignUpInfo {
     role: string[];
     password: string;
 
-    constructor(name: string,lastName: string, username: string, email: string, password: string) {
+    constructor(id: number,name: string,lastName: string, username: string, email: string, password: string) {
+        this.id = id;
         this.name = name;
         this.lastName = lastName;
         this.username = username;

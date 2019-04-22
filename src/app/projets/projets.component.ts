@@ -19,9 +19,11 @@ export class ProjetsComponent implements OnInit {
   projet= [];
   detail= <any>{}; 
   tache= <any>{}; 
+  task= <any>{};
   list=true;
   cordinateur:boolean=false;
-  projet_groupe:number=0;
+  projet_groupe={groupes:[],
+                 projet:{id:0}};
   isVisibleProd:boolean=false;
   isVisibleTache_Add:boolean=false;
   isVisibleTache_Update:boolean=false;
@@ -37,10 +39,14 @@ export class ProjetsComponent implements OnInit {
   eleves_taches = [];
 
   grps=[];
-  grp={};
+  grp={
+  users:[],
+  groupe:{id:0}
+  };
+ 
 
   eleves=[];
-  eleve={};
+  eleve={user1:{}};
 
 
 
@@ -48,9 +54,15 @@ export class ProjetsComponent implements OnInit {
   user: any;
   authority:string="";
   roles= [];
-  projet_update={};
+  projet_update={
+      projet:{id:0},
+      nom:"",
+      description:"",
+      date:[]
+  };
 
   tache_update={  
+    id:0,
     nom:"",
     description:"",
     date:[],
@@ -58,17 +70,20 @@ export class ProjetsComponent implements OnInit {
   }
 
   tache_add={  
+    phase:{},
     nom:"",
     description:"",
     date:[], 
   }
 
   s_tache_update={  
+    id:0,
     nom:"",
     description:"",
   }
 
   s_tache_add={  
+    tache:{},
     nom:"",
     description:"",
   }
@@ -156,16 +171,32 @@ export class ProjetsComponent implements OnInit {
     this.tache_add.date.push(new Date());
     this.tache_add.date.push(new Date());
     this.isVisibleTache_Add=true;
+  }
+
+  /*to_update_sous_tache(t){
+   // console.log(t);
+    this.tache_update=t.tache;
+    this.tache_update.date=[];
+    this.tache_update.date.push(new Date(t.tache.dateDebut));
+    this.tache_update.date.push(new Date(t.tache.dateFin));
+    
+    this.isVisibleTache_Update=true;
+  } */
+
+  to_add_sous_tache(p){   
+    this.s_tache_add.tache=p.tache; 
+    this.isVisible_s_Tache_Add=true;
   } 
 
   to_update_s_tache(s){
-   // console.log(s);
+    console.log(s);
     this.s_tache_update=s; 
     this.isVisible_s_Tache_Update=true;
   } 
 
-  to_add_s_tache(tache){
-    s_tache_add.tache=tache;    
+  to_add_s_tache(){
+    this.s_tache_add.tache=this.tache.tache;
+    console.log(this.s_tache_add);    
     this.isVisible_s_Tache_Add=true;
   } 
 
@@ -265,10 +296,13 @@ export class ProjetsComponent implements OnInit {
 
 
   show_affectation(t): void {
+    this.task=t;
     this.grps=[];
-    this.grp={};
+    this.grp={users:[],
+              groupe:{id:0}
+              };
     this.eleves=[];
-    this.eleve={};
+    this.eleve={user1:{}};
     this.eleves_taches = [];
 
     for(var i=0;i<t.tacheEleves.length;i++){
@@ -293,19 +327,106 @@ export class ProjetsComponent implements OnInit {
   }  
 
   change_grps(value: string): void {
-    //console.log("change")
+    //console.log("change") 
     this.eleves=this.grp.users;
-    this.eleve={};
+    this.eleve={user1:{}};
+  }
+
+  delete_eleve_tache(eleve_tache){
+    for(var i=0;i<this.eleves_taches.length;i++){
+      if(this.eleves_taches[i].groupe.id == eleve_tache.groupe.id && this.eleves_taches[i].user.id == eleve_tache.user.id){
+           console.log(this.eleves_taches)
+           console.log(eleve_tache)  
+           this.eleves_taches.splice(i,1);break;
+      }  
+    }        
+     
+  }
+
+  update_eleve_tache(eleve_tache){
+     console.log(this.grps)
+     console.log(eleve_tache) 
+     for(var i=0;i<this.grps.length;i++){
+        if(this.grps[i].groupe.id == eleve_tache.groupe.id){
+          this.grp=this.grps[i];
+          this.eleves=this.grp.users;
+          for(var k=0;k<this.eleves.length;k++){
+              if(this.eleves[k].user1.id == eleve_tache.user.id){
+                this.eleve=this.eleves[k];    
+              }
+
+          }
+                  
+
+        }  
+     }
   }
 
   change_eleves(value: string): void {
     console.log("grp",this.grp);
     console.log("eleve",this.eleve);
-    /*for(var k=0;k<this.detail.groupes[j].users.length;k++){
-          if(t.tacheEleves[i].eleve_tache.id==this.detail.groupes[j].users[k].user1.id){
-              
-          }
-    } */
+    console.log("eleve",this.eleves_taches);
+    var etat=false;
+    for(var i=0;i<this.eleves_taches.length;i++){
+        if(this.eleves_taches[i].groupe.id==this.grp.groupe.id){
+           this.eleves_taches[i].user=this.eleve.user1;
+           /*for(var j=0;j<this.grp.users.length;j++){
+              if(this.eleves_taches[i].groupe.id==this.grp.users[j].user1.id){
+                this.eleves_taches[i].user=this.grp.users[j].user1;
+              }
+           }*/
+           etat=true;break;
+        }
+    }
+    
+    if(!etat){
+      this.eleves_taches.push({
+                  groupe:this.grp.groupe,
+                  user:this.eleve.user1
+              });
+    } 
+  }
+
+  tache_eleves(){ 
+
+    this.isVisibleAffectations=false;
+
+    var eleves=[];
+    for(var i=0;i<this.eleves_taches.length;i++){
+       eleves.push(this.eleves_taches[i].user.id);      
+    } 
+
+    console.log(eleves);
+    console.log(this.task.tache.id);
+    var ff={
+    'tache':this.task.tache.id,
+    'eleves':eleves
+    }
+ 
+    this.authService.tache_eleves(ff).subscribe(
+      data => { 
+        this.notification.create('success', 'Groupes',
+           'modifié avec succès');
+        console.log("datadd",data);   
+        this.task=data;   
+
+        for(var i=0;i<this.detail.phases.length;i++){
+          if(this.detail.phases[i].phase.id==data.tache.phase.id){
+            for(var j=0;j<this.detail.phases[i].taches.length;j++){
+              if(this.detail.phases[i].taches[j].tache.id==data.tache.id)
+              this.detail.phases[i].taches[j]=data;  
+            }
+          }    
+        }  
+
+        //this.load_project();   
+      },
+      error => { 
+        this.notification.create('error', 'Groupes',
+           'Erreur de serveur');  
+      }
+    ); 
+
   }
 
   
@@ -379,6 +500,19 @@ export class ProjetsComponent implements OnInit {
           error => {
             this.fileList=[];  
             this.formData=new FormData();
+            this.notification.create('error', 'Document',
+               'Erreur de serveur');  
+          }
+        );
+  }
+
+  export_zip(x): void {
+    this.authService.export_zip(1).subscribe(
+          data => {
+             this.notification.create('success', 'Document',
+               'ajouté avec succès');   
+          },
+          error => {
             this.notification.create('error', 'Document',
                'Erreur de serveur');  
           }
@@ -537,8 +671,8 @@ update_phase(){
                 'dd':this.phase_update.date[0],
                 'df':this.phase_update.date[1] };
     this.authService.update_phase(phase).subscribe(
-          data => { 
-            console.log("data",data);
+          data => {  
+
             this.notification.create('success', 'Phase',
                'modifié avec succès');
             for(var i=0;i<this.detail.phases.length;i++){
@@ -575,6 +709,82 @@ delete_phase(p){
           }
         ); 
 }
+ 
+ajouter_s_tache(p){ 
+    this.isVisible_s_Tache_Add = false; 
+    console.log(p);
+    var tache= {'tache':p.tache.id,
+                'nom':p.nom,
+                'description':p.description};
+    this.authService.add_sous_tache(tache).subscribe(
+          data => { 
+             console.log("tache",data);
+            //console.log("detail",this.detail);
+            /*data.productionTaches=[];
+            data.sousTaches=[];
+            data.tacheEleves=[];*/
+            this.notification.create('success', 'Sous tache',
+               'ajouté avec succès');
+             
+            this.tache.sousTaches=data.sousTaches; 
+            this.projet_statistique(this.projet);
+
+          },
+          error => { 
+            this.notification.create('error', 'Tache',
+               'Erreur de serveur');  
+          }
+        );
+}
+
+modifier_s_tache(p){ 
+    this.isVisible_s_Tache_Update = false; 
+    console.log(p);
+    console.log(this.tache);
+    
+    var tache= {'tache':p.id,
+                'nom':p.nom,
+                'description':p.description};
+    this.authService.update_sous_tache(tache).subscribe(
+          data => {  
+            this.notification.create('success', 'Sous tache',
+               'modifié avec succès');
+             
+            this.tache.sousTaches=data.sousTaches; 
+            this.projet_statistique(this.projet);
+
+          },
+          error => { 
+            this.notification.create('error', 'Tache',
+               'Erreur de serveur');  
+          }
+        );
+}
+
+
+delete_sous_tache(p){  
+    console.log(p);
+    console.log(this.tache);
+    this.formData=new FormData();
+    this.formData.append('id', p.id);
+    this.authService.delete_sous_tache(this.formData).subscribe(
+          data => { 
+            this.notification.create('success', 'Sous tache',
+               'supprimé avec succès');
+            for(var i=0;i<this.tache.sousTaches.length;i++){ 
+                if(this.tache.sousTaches[i].id==p.id){
+                  this.tache.sousTaches.splice(i,1);break;
+                }
+            }     
+            this.projet_statistique(this.projet);
+          },
+          error => { 
+            this.notification.create('error', 'Tache',
+               'Erreur de serveur');  
+          }
+        ); 
+}
+
 
 add_tache(p){ 
     this.isVisibleTache_Add = false; 
@@ -770,17 +980,18 @@ update_groupes(){
         new_groupes.push(this.groupes_selected[j]);
       }
     } 
- 
 
-    console.log(old_groupes);
-    console.log(new_groupes);
-
-    this.formData=new FormData();
+    /* this.formData=new FormData();
     this.formData.append('projet', this.projet_groupe.projet.id);
     this.formData.append('groupes_deleted', old_groupes);
-    this.formData.append('groupes_added', new_groupes);
+    this.formData.append('groupes_added', new_groupes);*/
+    var dd={
+          'projet':this.projet_groupe.projet.id,
+          'groupes_deleted':old_groupes,
+          'groupes_added':new_groupes
+    }
 
-    this.authService.projet_groupes(this.formData).subscribe(
+    this.authService.projet_groupes(dd).subscribe(
       data => { 
         this.notification.create('success', 'Groupes',
            'modifié avec succès');

@@ -18,6 +18,19 @@
     <div class="col-lg-4" *ngFor="let g of groupes">
          <div class="card-box task-detail">
 			<h5 class="m-b-5">Groupe : {{g.groupe.nom}}</h5> 
+
+            <div class="dropdown float-right" style="margin-top: -40px!important;">
+                <a class="dropdown-toggle card-drop arrow-none" data-toggle="dropdown" aria-expanded="false">
+                    <h3 class="m-0 text-muted"><i class="mdi mdi-dots-horizontal"></i></h3>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="btnGroupDrop1" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(24px, 31px, 0px);"> 
+                    <a class="dropdown-item" (click)="to_update_groupe(g)">Modifier</a> 
+
+                    <a class="dropdown-item" nz-popconfirm nzTitle="êtes-vous sûr de vouloir supprimer ce groupe ?" (nzOnConfirm)="delete_groupe(g)" nzOkText="Oui" nzCancelText="non" nzPlacement="leftBottom">Supprimer</a>
+ 
+                </div>
+            </div>
+
             <div class="mt-3" *ngFor="let u of g.users">
                 <p *ngIf="u.coordinateur" class="float-right mb-0 mt-2">
                     <b>Coordinateur</b>
@@ -70,5 +83,50 @@
       <ng-template #modalFooter> 
         <button nz-button nzType="default" (click)="isVisible=false">Annuler</button>
         <button nz-button nzType="primary" [nzLoading]="isOkLoading" [disabled]="!nom || !coordinateur" (click)="ajouter()">Confirmer</button>
+      </ng-template>
+</nz-modal>
+
+
+
+<nz-modal [(nzVisible)]="isVisible_groupe" [nzWidth]="600" [nzTitle]="modalTitle_groupe" [nzContent]="modalContent_groupe"  [nzFooter]="modalFooter_groupe" (nzOnCancel)="isVisible_groupe=false">
+    
+      <ng-template #modalTitle_groupe>
+        Modifie groupe
+      </ng-template>
+
+      <ng-template #modalContent_groupe>
+       
+    <div class="row">
+                <label class="col-12 col-form-label">Nom *</label>
+                <div class="col-12">
+                    <input type="text" placeholder="Nom de groupe" class="form-control" [(ngModel)]="nom" />
+                </div>
+        </div>
+
+        <div class="row">
+                <label class="col-12 col-form-label">Eleves *</label>
+                <div class="col-12">
+                    <nz-select [nzMaxMultipleCount]="10" style="width: 100%" nzMode="multiple" nzPlaceHolder="Please select" [(ngModel)]="users_selected" (ngModelChange)="change_eleves()">
+              <nz-option *ngFor="let g of eleves" [nzLabel]="g.name" [nzValue]="g"></nz-option>
+            </nz-select>
+                </div>
+        </div>
+
+        <div class="row">
+                <label class="col-12 col-form-label">Coordinateur *</label>
+                <div class="col-12">
+                    <nz-select style="width: 100%;" [(ngModel)]="coordinateur" [nzSize]="size">
+              <nz-option *ngFor="let option of users_selected" [nzLabel]="option.name" [nzValue]="option"></nz-option>
+            </nz-select>
+                </div>
+        </div>
+
+
+        
+
+      </ng-template>
+      <ng-template #modalFooter_groupe> 
+        <button nz-button nzType="default" (click)="isVisible_groupe=false">Annuler</button>
+        <button nz-button nzType="primary" [nzLoading]="isOkLoading" [disabled]="!nom || !coordinateur" (click)="modifier()">Enregistrer</button>
       </ng-template>
 </nz-modal>

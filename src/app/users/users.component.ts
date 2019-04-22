@@ -25,10 +25,14 @@ export class UsersComponent implements OnInit {
    
   validateForm: FormGroup;
   user: any;
+  user_id: number=0;
   signupInfo: SignUpInfo;
+  formData:FormData = new FormData();
   errorMessage = '';
   data = [];
   displayData = [ ...this.data ];
+  authority:string="";
+  roles= [];
 
   submitForm(): void {
     for (const i in this.validateForm.controls) {
@@ -62,11 +66,25 @@ export class UsersComponent implements OnInit {
       authorities: this.token.getAuthorities()
     };
 
+    this.roles = this.token.getAuthorities();
+    this.roles.every(role => {
+      if (role === 'ROLE_PROFESSEUR') {
+        this.authority = 'professeur';
+        return false;
+      } else if (role === 'ROLE_ELEVE') {
+        this.authority = 'eleve';
+        return false;
+      }
+      this.authority = 'admin';
+      return true;
+    });
+
     this.load();
   }
 
   load(): void {
-    this.authService.eleves().subscribe(
+    if (this.authority == 'professeur') {
+      this.authService.eleves().subscribe(
 	      response => {
 	        console.log(response); 
 	        this.data = response;
@@ -76,6 +94,31 @@ export class UsersComponent implements OnInit {
 	        console.log(error);
  	      }
 	    );
+    }  
+
+    if (this.authority == 'admin') {
+      this.authService.professeurs().subscribe(
+        response => { 
+          this.data = response;
+          for(var i=0;i<this.data.length;i++){
+            if(this.data[i].username=="test"){
+              this.data.splice(i,1);break;
+            }
+          }
+
+          for(var i=0;i<this.data.length;i++){
+            if(this.data[i].username=="admin"){
+              this.data.splice(i,1);break;
+            }
+          }
+
+          this.displayData = [ ...this.data ];
+        },
+        error => {
+          console.log(error);
+        }
+      );
+    }  
   }  
 
   updateConfirmValidator(): void {
@@ -96,6 +139,29 @@ export class UsersComponent implements OnInit {
  
   showModal(): void {
     this.isVisible = true;
+    this.user_id=0;
+    this.validateForm.patchValue({
+      name:'',
+      lastName:'',
+      nickname:'',
+      email:'',
+      password:'',
+      checkPassword:''
+    });
+  }
+
+  to_update(u): void {
+    console.log(u);
+    this.isVisible = true; 
+    this.user_id=u.id;
+    this.validateForm.patchValue({
+      name:u.name,
+      lastName:u.lastName,
+      nickname:u.username,
+      email:u.email,
+      password:'',
+      checkPassword:''
+    }); 
   }
 
   handleCancel(): void {
@@ -125,38 +191,101 @@ export class UsersComponent implements OnInit {
     this.listOfSearchName = listOfSearchName;
     this.searchAddress = searchAddress;
   }
+  delete_user(u): void {
+    console.log(u);
+    this.formData=new FormData();
+    this.formData.append('id', u.id);
+    this.authService.delete_user(this.formData).subscribe(
+    data => { 
+        this.notification.create('success', 'Utilisateur',
+           'supprimée avec succès');
+        this.load();
+      },
+      error => { 
+        this.notification.create('error', 'Eleve',
+           'Erreur de serveur');  
+      }
+    );
+  }
 
   handleOk(val): void {
       this.isConfirmLoading = true;
        
       this.signupInfo = new SignUpInfo(
+      this.user_id,
       val.name,
       val.lastName,
       val.nickname,
       val.email,
       val.password);
+      
+      if(this.user_id==0){
+
+         if (this.authority == 'admin') {
+            this.authService.add_professeur(this.signupInfo).subscribe(
+            data => {
+            console.log(data);
+            this.errorMessage='';
+    
+            this.isVisible = false;
+              this.isConfirmLoading = false;
+              this.load();
+              this.notification.create('success', 'Professeur',
+               'ajouté avec succès');  
+            },
+            error => {
+              console.log(error);
+              this.isConfirmLoading = false;
+              this.errorMessage = error.error.message;
+              this.notification.create('error', 'Professeur',
+                 'Erreur de serveur');  
+            });
+         }
+
+         if (this.authority == 'professeur') {
+            this.authService.signUp(this.signupInfo).subscribe(
+            data => {
+            console.log(data);
+            this.errorMessage='';
+    
+            this.isVisible = false;
+              this.isConfirmLoading = false;
+              this.load();
+              this.notification.create('success', 'Élève',
+               'ajouté avec succès');  
+            },
+            error => {
+              console.log(error);
+              this.isConfirmLoading = false;
+              this.errorMessage = error.error.message;
+              this.notification.create('error', 'Élève',
+                 'Erreur de serveur');  
+            });
  
-
-
-	    this.authService.signUp(this.signupInfo).subscribe(
-	      data => {
-	        console.log(data);
-	        this.errorMessage='';
-  
-	        this.isVisible = false;
-            this.isConfirmLoading = false;
-            this.load();
-            this.notification.create('success', 'Élève',
-             'ajouté avec succès');  
-	      },
-	      error => {
-	        console.log(error);
-	        this.isConfirmLoading = false;
-	        this.errorMessage = error.error.message;
-	        this.notification.create('error', 'Élève',
-             'Erreur de serveur');  
- 	      }
-	    );
+         }
+          
+      }else{
+          this.authService.update_user(this.signupInfo).subscribe(
+            data => {
+            console.log(data);
+            this.errorMessage='';
+    
+            this.isVisible = false;
+              this.isConfirmLoading = false;
+              this.load();
+              this.notification.create('success', 'Élève',
+               'modifié avec succès');  
+            },
+            error => {
+              console.log(error);
+              this.isConfirmLoading = false;
+              this.errorMessage = error.error.message;
+              this.notification.create('error', 'Élève',
+                 'Erreur de serveur');  
+            }
+            );
+      }
+	    
 
           
   }

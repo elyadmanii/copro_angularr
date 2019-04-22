@@ -44,10 +44,25 @@
                                 </nz-form-control>
                               </nz-form-item>
                               <nz-form-item>
+                                
+
+
                                 <nz-form-control>
                                   <button nz-button class="login-form-button pull-right" [disabled]="!validateForm.valid" [nzType]="'primary'" [nzLoading]="isLoading">Connectez-vous</button>
                                 </nz-form-control>
+
+                                <nz-form-control>
+                                  <a class="pull-right" (click)="showModal()">Nouveau professeur</a>
+                                </nz-form-control>
+                                
                               </nz-form-item>
+
+                              <nz-form-item>
+                                
+                              </nz-form-item>
+
+                              
+
                             </form>
                             <ng-template #prefixUser><i nz-icon type="user"></i></ng-template>
                             <ng-template #prefixLock><i nz-icon type="lock"></i></ng-template>
@@ -61,3 +76,96 @@
  
 
         </div>
+
+
+        <nz-modal [(nzVisible)]="isVisible" [nzWidth]="800" [nzTitle]="modalTitle" [nzContent]="modalContent" [nzFooter]="null" (nzOnCancel)="handleCancel()">
+    
+      <ng-template #modalTitle>
+        Nouveau professeur
+      </ng-template>
+
+      <ng-template #modalContent>
+        <form nz-form  [formGroup]="fp" (ngSubmit)="handleOk(fp.value)">
+          
+      <nz-alert *ngIf="errorMessage" nzType="error" nzMessage="{{errorMessage}}"></nz-alert>
+
+        <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="name" nzRequired>
+          <span>
+            Nom
+          </span>
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input id="name" formControlName="name">
+          <nz-form-explain *ngIf="fp.get('name').dirty && fp.get('name').errors">Please input your nickname!</nz-form-explain>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lastName" nzRequired>
+          <span>
+            Prénom
+          </span>
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input id="lastName" formControlName="lastName">
+          <nz-form-explain *ngIf="fp.get('lastName').dirty && fp.get('lastName').errors">Please input your nickname!</nz-form-explain>
+        </nz-form-control>
+      </nz-form-item>
+
+
+      
+
+
+        <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="email">Email</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input formControlName="email" id="email">
+          <nz-form-explain *ngIf="fp.get('email').dirty && fp.get('email').errors">The input is not valid E-mail!</nz-form-explain>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="password" nzRequired>Mot de passe</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input type="password" id="password" formControlName="password" (ngModelChange)="updateConfirmValidator()">
+          <nz-form-explain *ngIf="fp.get('password').dirty && fp.get('password').errors">Please input your password!</nz-form-explain>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="checkPassword" nzRequired>Confirmer mot de passe</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input type="password" formControlName="checkPassword" id="checkPassword">
+          <nz-form-explain *ngIf="fp.get('checkPassword').dirty && fp.get('checkPassword').errors">
+            <ng-container *ngIf="fp.get('checkPassword').hasError('required')">
+              Please confirm your password!
+            </ng-container>
+            <ng-container *ngIf="fp.get('checkPassword').hasError('confirm')">
+              Two passwords that you enter is inconsistent!
+            </ng-container>
+          </nz-form-explain>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="nickname" nzRequired>
+          <span>
+            UserName
+            <i nz-icon nz-tooltip nzTitle="Ce nom utilisé pour l'authentification: unique" type="question-circle" theme="outline"></i>
+          </span>
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input id="nickname" formControlName="nickname">
+          <nz-form-explain *ngIf="fp.get('nickname').dirty && fp.get('nickname').errors">Please input your nickname!</nz-form-explain>
+        </nz-form-control>
+      </nz-form-item>
+       
+       <nz-form-item>
+               <nz-form-control>
+                   <button nz-button nzType="primary" type="submit" [disabled]="!fp.valid" [nzLoading]="isConfirmLoading">Enregistrer</button>  
+               </nz-form-control>
+        </nz-form-item>
+
+        </form>      
+      </ng-template>
+ 
+      
+    </nz-modal> 

@@ -6,6 +6,7 @@ import { Injectable } from '@angular/core';
 export class Global_varService {
 
   url = 'http://localhost:8080/';
+  // url = 'http://app.coproline.org/spring/';
   //url = 'http://coproline-coproline2.1d35.starter-us-east-1.openshiftapps.com/';
   
   
