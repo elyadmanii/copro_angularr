@@ -13,7 +13,7 @@
 
         <nz-steps [nzCurrent]="current">
 	      <nz-step nzTitle="Projet et Groupes"></nz-step>
-	      <nz-step nzTitle="Phases et Taches"></nz-step>
+	      <nz-step nzTitle="Phases et Tâches"></nz-step>
 	    </nz-steps>
 
 	    <div class="steps-content">
@@ -66,7 +66,7 @@
                   <nz-collapse-panel *ngFor="let p of phases" [nzHeader]="p.nom" [nzActive]="p.active">
                     <p><b>{{p.nom}}</b>
 
-                    <button type="button" (click)="showModalTache(p)" class="btn btn-success waves-effect waves-light btn-sm pull-right"><i class="fa fa-plus m-r-5"></i>Tache</button>
+                    <button type="button" (click)="showModalTache(p)" class="btn btn-success waves-effect waves-light btn-sm pull-right"><i class="fa fa-plus m-r-5"></i>Tâche</button>
 
                     <br/>
                        {{p.description}} 
@@ -157,14 +157,14 @@
                 <nz-modal [(nzVisible)]="isVisibleTache" [nzWidth]="600" [nzTitle]="modalTitle" [nzContent]="modalContent"  [nzFooter]="modalFooter" (nzOnCancel)="cancel_tache()">
     
                       <ng-template #modalTitle>
-                        Nouvelle tache
+                        Nouvelle tâche
                       </ng-template>
 
                       <ng-template #modalContent>
                         <div class="row">
                             <label class="col-12 col-form-label">Nom</label>
                             <div class="col-12">
-                                <input type="text" placeholder="Nom de la tache" class="form-control" [(ngModel)]="tache.nom" />
+                                <input type="text" placeholder="Nom de la tâche" class="form-control" [(ngModel)]="tache.nom" />
                             </div>
                         </div>
 
@@ -176,7 +176,7 @@
                         </div>
 
                         <div class="row">
-                                <label class="col-12 col-form-label">Durée de la tache</label>
+                                <label class="col-12 col-form-label">Durée de la tâche</label>
                                 <div class="col-12">
                                         <nz-range-picker 
                                           [(ngModel)]="tache.date"

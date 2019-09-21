@@ -60,11 +60,11 @@
                                         </li>
                                         <li class="list-inline-item">
                                             <h3 class="mb-0">{{p.nbr_tache}}</h3>
-                                            <p class="text-muted">Taches</p>
+                                            <p class="text-muted">Tâches</p>
                                         </li>
                                         <li class="list-inline-item">
                                             <h3 class="mb-0">{{p.nbr_sous_tache}}</h3>
-                                            <p class="text-muted">Sous taches</p>
+                                            <p class="text-muted">Sous tâches</p>
                                         </li>
                                     </ul>
 
@@ -76,7 +76,7 @@
                                         </a>
                                       
                                         <br/>
-                                        <label class="">Tache complet: <span class="text-custom">{{g.task_complet}}/{{p.nbr_tache}}</span></label>
+                                        <label class="">Tâche complet: <span class="text-custom">{{g.task_complet}}/{{p.nbr_tache}}</span></label>
                                     
                                         <nz-progress [nzPercent]="g.percent"></nz-progress>
 
@@ -135,10 +135,10 @@
                                     </div>
 
                                     <div class="attached-files mt-4">
-                                        <h5 class="">les documents de projet </h5>
+                                        <h5 class="">Documents de projet </h5>
                                         <div class="files-list">
                                             <div class="file-box" *ngFor="let d of detail.documentProjets">
-                                                <a href="{{g_var.url}}api/auth/docs/{{d.id}}" target="_blank"><img src="assets/img/file.png" class="img-responsive img-thumbnail" alt="attached-img"></a>
+                                                <a href="{{g_var.url}}api/auth/docs/{{d.id}}" target="_blank"><img src="assets/img/ext/{{get_ext(d)}}" class="img-responsive img-thumbnail" alt="attached-img"></a>
                                                 <p class="font-13 mb-1 text-muted"><small>{{d.document}}</small></p>
                                                 
                                                 <a *ngIf="authority=='professeur'" nz-popconfirm nzTitle="êtes-vous sûr de vouloir supprimer ce document ?" (nzOnConfirm)="delete_document(d.id)" nzOkText="Oui" nzCancelText="non" nzPlacement="rightBottom">Supprimer</a>
@@ -153,13 +153,13 @@
                                 </div>
 
                                 <div class="card-box task-detail" *ngIf="show_tache">
-                                	<h4 class="m-b-20">Tache : {{tache.tache.nom}}</h4>
+                                	<h4 class="m-b-20">Tâche : {{tache.tache.nom}}</h4>
 								                  	<p class="text-muted">
                                         {{tache.tache.description}}
                                     </p>
 
                                     <div class="attached-files mt-4">
-                                        <h5 class="">Production de la tache </h5>
+                                        <h5 class="">Production de la tâche </h5>
                                         <div class="files-list">
                                             <div *ngIf="get_my_production(tache)" class="file-box">
                                                 <a  href="{{g_var.url}}api/auth/production/{{get_my_production(tache).id}}" target="_blank"><img src="assets/img/file.png" class="img-responsive img-thumbnail" alt="attached-img"></a>
@@ -176,9 +176,9 @@
                                     </div>
 
                                     <div>
-										<h5 class="">Les sous taches ({{tache.sousTaches.length}}) 
+										<h5 class="">{{authority=='professeur'?'Les sous tâches ':'Travail demandé '}} ({{tache.sousTaches.length}}) 
                           <span style="cursor: pointer;" (click)="to_add_s_tache()" *ngIf="authority=='professeur'" class="pull-right">
-                            <i class="fa fa-plus"></i>&nbsp; nouvelle sous tache  
+                            <i class="fa fa-plus"></i>&nbsp; nouvelle sous tâche  
                            </span> 
                     </h5>
 
@@ -194,7 +194,7 @@
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="btnGroupDrop1" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(24px, 31px, 0px);">
                                             <a class="dropdown-item" (click)="to_update_s_tache(s)">Modifier</a>
-                                            <a class="dropdown-item" nz-popconfirm nzTitle="êtes-vous sûr de vouloir supprimer cette sous tache ?" (nzOnConfirm)="delete_sous_tache(s)" nzOkText="Oui" nzCancelText="non" nzPlacement="rightBottom">Supprimer</a>
+                                            <a class="dropdown-item" nz-popconfirm nzTitle="êtes-vous sûr de vouloir supprimer cette sous tâche ?" (nzOnConfirm)="delete_sous_tache(s)" nzOkText="Oui" nzCancelText="non" nzPlacement="rightBottom">Supprimer</a>
                                         </div>
                       </div>
 
@@ -222,7 +222,7 @@
                                             
                                             <a class="dropdown-item" nz-popconfirm nzTitle="êtes-vous sûr de vouloir supprimer cet phase ?" (nzOnConfirm)="delete_phase(p)" nzOkText="Oui" nzCancelText="non" nzPlacement="rightBottom">Supprimer</a>
 
-                                            <a class="dropdown-item" (click)="to_add_tache(p)">Nouvelle tache</a> 
+                                            <a class="dropdown-item" (click)="to_add_tache(p)">Nouvelle tâche</a> 
 
 
                                         </div>
@@ -236,7 +236,7 @@
                                         <p (click)="p.show=!p.show" class="m-b-0 font-13"> 
                                          <span style="cursor: pointer;" class="pull-right">
                                           <i class="fa fa-arrow-{{p.show?'up':'down'}}"></i>&nbsp;  
-                                         ({{p.taches?p.taches.length:0}}) taches&nbsp;
+                                         ({{p.taches?p.taches.length:0}}) tâches&nbsp;
                                           <i class="fa fa-arrow-{{p.show?'up':'down'}}"></i>    
                                          </span>
                                         </p>
@@ -261,7 +261,7 @@
                                                       <div class="dropdown-menu dropdown-menu-right" aria-labelledby="btnGroupDrop1" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(24px, 31px, 0px);">
                                                           <a class="dropdown-item" (click)="to_update_tache(t)">Modifier</a> 
 
-                                                          <a class="dropdown-item" nz-popconfirm nzTitle="êtes-vous sûr de vouloir supprimer cet tache ?" (nzOnConfirm)="delete_tache(t)" nzOkText="Oui" nzCancelText="non" nzPlacement="rightBottom">Supprimer</a>
+                                                          <a class="dropdown-item" nz-popconfirm nzTitle="êtes-vous sûr de vouloir supprimer cet tâche ?" (nzOnConfirm)="delete_tache(t)" nzOkText="Oui" nzCancelText="non" nzPlacement="rightBottom">Supprimer</a>
 
                                                           <a class="dropdown-item" (click)="show_productions(t)">Productions</a> 
                                                           <a class="dropdown-item" (click)="show_affectation(t)">Affectations</a> 
@@ -284,7 +284,7 @@
                  <nz-modal [(nzVisible)]="isVisible" [nzWidth]="400" [nzTitle]="modalTitle" [nzContent]="modalContent"  [nzFooter]="modalFooter" (nzOnCancel)="handleCancel()">
     
 				      <ng-template #modalTitle>
-				        Production de la tache
+				        Production de la tâche
 				      </ng-template>
 
 				      <ng-template #modalContent>
@@ -383,14 +383,14 @@
                 <nz-modal [(nzVisible)]="isVisibleTache_Add" [nzWidth]="600" [nzTitle]="title_tache_add" [nzContent]="content_tache_add"  [nzFooter]="footer_tache_add" (nzOnCancel)="isVisibleTache_Add=false">
     
                       <ng-template #title_tache_add>
-                        Nouvelle tache
+                        Nouvelle tâche
                       </ng-template>
 
                       <ng-template #content_tache_add>
                         <div class="row">
                             <label class="col-12 col-form-label">Nom</label>
                             <div class="col-12">
-                                <input type="text" placeholder="Nom de la tache" class="form-control" [(ngModel)]="tache_add.nom" />
+                                <input type="text" placeholder="Nom de la tâche" class="form-control" [(ngModel)]="tache_add.nom" />
                             </div>
                         </div>
 
@@ -402,7 +402,7 @@
                         </div>
 
                         <div class="row">
-                                <label class="col-12 col-form-label">Durée de la tache</label>
+                                <label class="col-12 col-form-label">Durée de la tâche</label>
                                 <div class="col-12">
                                         <nz-range-picker 
                                           [(ngModel)]="tache_add.date"
@@ -424,14 +424,14 @@
                 <nz-modal [(nzVisible)]="isVisibleTache_Update" [nzWidth]="600" [nzTitle]="title_tache_update" [nzContent]="content_tache_update"  [nzFooter]="footer_tache_update" (nzOnCancel)="isVisibleTache_Update=false">
     
                       <ng-template #title_tache_update>
-                        Modifier tache
+                        Modifier tâche
                       </ng-template>
 
                       <ng-template #content_tache_update>
                         <div class="row">
                             <label class="col-12 col-form-label">Nom</label>
                             <div class="col-12">
-                                <input type="text" placeholder="Nom de la tache" class="form-control" [(ngModel)]="tache_update.nom" />
+                                <input type="text" placeholder="Nom de la tâche" class="form-control" [(ngModel)]="tache_update.nom" />
                             </div>
                         </div>
 
@@ -443,7 +443,7 @@
                         </div>
 
                         <div class="row">
-                                <label class="col-12 col-form-label">Durée de la tache</label>
+                                <label class="col-12 col-form-label">Durée de la tâche</label>
                                 <div class="col-12">
                                         <nz-range-picker 
                                           [(ngModel)]="tache_update.date"
@@ -548,14 +548,14 @@
                 <nz-modal [(nzVisible)]="isVisible_s_Tache_Add" [nzWidth]="600" [nzTitle]="title_s_tache_add" [nzContent]="content_s_tache_add"  [nzFooter]="footer_s_tache_add" (nzOnCancel)="isVisible_s_Tache_Add=false">
     
                       <ng-template #title_s_tache_add>
-                        Nouvelle sous tache
+                        Nouvelle sous tâche
                       </ng-template>
 
                       <ng-template #content_s_tache_add>
                         <div class="row">
                             <label class="col-12 col-form-label">Nom</label>
                             <div class="col-12">
-                                <input type="text" placeholder="Nom de la sous tache" class="form-control" [(ngModel)]="s_tache_add.nom" />
+                                <input type="text" placeholder="Nom de la sous tâche" class="form-control" [(ngModel)]="s_tache_add.nom" />
                             </div>
                         </div>
 
@@ -580,14 +580,14 @@
                 <nz-modal [(nzVisible)]="isVisible_s_Tache_Update" [nzWidth]="600" [nzTitle]="title_s_tache_update" [nzContent]="content_s_tache_update"  [nzFooter]="footer_s_tache_update" (nzOnCancel)="isVisible_s_Tache_Update=false">
     
                       <ng-template #title_s_tache_update>
-                        Modifier sous tache
+                        Modifier sous tâche
                       </ng-template>
 
                       <ng-template #content_s_tache_update>
                         <div class="row">
                             <label class="col-12 col-form-label">Nom</label>
                             <div class="col-12">
-                                <input type="text" placeholder="Nom de la sous tache" class="form-control" [(ngModel)]="s_tache_update.nom" />
+                                <input type="text" placeholder="Nom de la sous tâche" class="form-control" [(ngModel)]="s_tache_update.nom" />
                             </div>
                         </div>
 

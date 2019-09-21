@@ -42,10 +42,10 @@
               <div class="col-md-5"><p style="margin-bottom: 14px!important;"><b>UserName</b></p></div>
               <div class="col-md-7"><p class="mb-0">{{user.username}}</p></div>
 
-              <div class="col-md-5"><p style="margin-bottom: 14px!important;"><b>Mot de passe</b></p></div>
+              <!-- <div class="col-md-5"><p style="margin-bottom: 14px!important;"><b>Mot de passe</b></p></div>
               <div class="col-md-7"><p class="mb-0" (click)="isVisiblePasse=!isVisiblePasse">Modifier</p></div>
 
-              <!--<div class="col-md-5" *ngIf="authority=='eleve'"><p style="margin-bottom: 14px!important;"><b>Mon professeur</b></p></div>
+              <div class="col-md-5" *ngIf="authority=='eleve'"><p style="margin-bottom: 14px!important;"><b>Mon professeur</b></p></div>
               <div class="col-md-7" *ngIf="authority=='eleve'">{{user.superieur.name}} &nbsp;{{user.superieur.lastName}}</div>-->
 
             </div>
@@ -132,6 +132,14 @@
                   </div>
               </div>
 
+              <div class="form-group row">
+                  <label class="col-3 col-form-label">Mot de passe</label>
+                  <div class="col-9">
+                      <input type="password" class="form-control" [(ngModel)]="user_update.password" placeholder="Mot de passe">
+                      <span class="help-block"><small></small></span>
+                  </div>
+              </div> 
+
            
       </div>
 
@@ -141,7 +149,7 @@
       </ng-template>
       <ng-template #modalFooter1>
         <button nz-button nzType="default" (click)="isVisibleInfo=false">Annuler</button>
-        <button nz-button nzType="primary" [nzLoading]="isConfirmLoading" (click)="modifier1()">Modifier</button>
+        <button nz-button nzType="primary" [disabled]="!user_update.password || !user_update.email || !user_update.username || !user_update.name || !user_update.lastName" [nzLoading]="isConfirmLoading" (click)="modifier1()">Modifier</button>
       </ng-template>
 </nz-modal>
 

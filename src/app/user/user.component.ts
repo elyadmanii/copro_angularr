@@ -48,7 +48,8 @@ export class UserComponent implements OnInit {
       lastName:this.user.lastName,
       name:this.user.name,
       email:this.user.email,
-      username:this.user.username
+      username:this.user.username,
+      password:""
      }
     console.log('user',this.user); 
     console.log('user',this.user_update);   
@@ -184,6 +185,8 @@ export class UserComponent implements OnInit {
       this.formData.append('lastName', this.user_update.lastName);
       this.formData.append('name', this.user_update.name);
       this.formData.append('username', this.user_update.username);
+      this.formData.append('password', this.user_update.password);
+ 
       
       this.authService.modifier_info(this.formData).subscribe(
         data => {

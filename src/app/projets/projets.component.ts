@@ -1005,4 +1005,58 @@ update_groupes(){
 }
   
 
+  get_ext(d){
+    var ext= d.document.split('.').pop(); 
+
+    if(ext == "pdf"){
+       return "pdf.svg"; 
+    }
+    if(ext == "png" || ext == "jpg" || ext == "jpeg"){
+       return "jpg.svg"; 
+    }
+    if(ext == "sql"){
+       return "sql.svg"; 
+    }
+    if(ext == "html"){
+       return "html.svg"; 
+    }
+    if(ext == "js"){
+       return "js.svg"; 
+    }
+    if(ext == "css"){
+       return "css.svg"; 
+    }
+    if(ext == "txt"){
+       return "txt.svg"; 
+    }
+    if(ext == "xlsx" || ext == "xls"){
+       return "doc.svg"; 
+    }
+    if(ext == "docx" || ext == "doc"){
+       return "xls.svg"; 
+    }
+    if(ext == "zip"){
+       return "zip.svg"; 
+    }
+    if(ext == "xml"){
+       return "xml.svg"; 
+    }
+    if(ext == "mp3"){
+       return "mp3.svg"; 
+    }
+    if(ext == "php"){
+       return "php.svg"; 
+    }
+    if(ext == "gif"){
+       return "gif.svg"; 
+    }
+    if(ext == "dll"){
+       return "dll.svg"; 
+    }
+    if(ext == "mp4" ||ext == "wmv" ||ext == "vod" ||ext == "mov"){
+       return "mov.svg"; 
+    }
+    return "file.png";  
+    
+  }
 }
